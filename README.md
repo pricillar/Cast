@@ -12,7 +12,7 @@ Cast is built to be _hacked_ to suit your needs. It's your streaming server, why
 1. Compatibility
 Cast is built to work with all of the widely used streaming standards in an innovative way. If you use Icecast or SHOUTcast, you'll be able to use Cast in exactly the same way. No complications, welcome to the 21st century.
 2. Innovation
-The clue's behind the name, ***Innovate*** Technologies. Cast is built on the definition of Innovation. The 90s was dull, boring and most importantly; 15 years ago. Cast promises an innovative solution to streaming. Combining clever, modern code with a beautiful UI; you really cannot go wrong.
+The clue's behind the name, **Innovate** Technologies. Cast is built on the definition of innovation. The 90s was dull, boring and most importantly; 15 years ago. Cast promises an innovative solution to streaming. Combining clever, modern code with a beautiful UI; you really cannot go wrong.
 
 Installation
 -------
@@ -55,4 +55,4 @@ Based off fabulous work done by these wonderful people: [TooTallNate](https://gi
 
 Note
 ----
-This is a beta version of Cast 1.0, we have a lot of new awesome features on the roadmap. Just give us some time. 
+This is a *beta* version of Cast 1.0, we have a lot of new awesome features on the roadmap. Just give us some time. 

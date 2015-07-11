@@ -1,7 +1,7 @@
 var rest = require("restler")
 
-var directories = ["http://dir.xiph.org/cgi-bin/yp-cgi", "http://yp.shoutcast.com"]
-    //var directories = []
+var directories = global.config.directories.Icecast
+
 var dirInfo = {} //{stream:{"dirurl":{info}}}
 
 var sendRequest = function(host, data, callback) {
