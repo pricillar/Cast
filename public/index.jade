@@ -1,0 +1,40 @@
+doctype html
+html(lang="en")
+  head
+    title Cast
+    link(href="//cdn.shoutca.st/cast/css/bootstrap.min.css",rel="stylesheet")
+    link(href="/static/cast.css",rel="stylesheet")
+    script(src="/static/player.js")
+    meta(name="viewport",content="width=device-width, initial-scale=1")
+  body
+    #site.site-wrapper
+        #site-inner.site-wrapper-inner
+            #container.cover-container
+                div(class="masthead clearfix")
+                    #innerHead.inner
+                        h3.masthead-brand Cast
+                        if isStreaming
+                            ul(class="nav masthead-nav")
+                                each stream in streams
+                                    if currentStream==stream
+                                        li(class="active")
+                                            a(href="/pub/"+stream) #{stream}
+                                    else
+                                        li
+                                            a(href="/pub/"+stream) #{stream}
+                        
+                div("inner cover")
+                    if isStreaming
+                        h1.cover-heading #{streamInfo.name}
+                        p.lead #{meta.song}
+                        button(onClick="pressedPlayButton('http://92.222.84.155/streams/"+currentStream+"')",class="btn btn-success btn-circle btn-xl")
+                            i(class="glyphicon glyphicon-play")
+                        if listencount==1
+                            p.listencount 1 person is listening right now
+                        else
+                            p.listencount #{listencount} people are listening right now
+                    else
+                        h1.cover-heading No streams found
+                
+            
+    

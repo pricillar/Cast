@@ -1,0 +1,25 @@
+{
+    "httpPort": 80,
+    "httpsPort": 443,
+    "httpsCert": "/cert",
+    "httpsKey": "/key",
+    "hostname": "http://92.222.84.155",
+
+    "input": {
+        "SHOUTcast": 8000
+    },
+
+    "streams": [{
+        "stream": "128kbps",
+        "password": "password"
+
+    }, {
+        "stream": "320kbps",
+        "password": "secure"
+    }, {
+        "stream": "live",
+        "password": "live",
+        "primary": true
+    }]
+
+}
