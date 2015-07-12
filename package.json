@@ -22,6 +22,7 @@
     "errorhandler": "~1.3.6",
     "exec-stream": "~0.1.0",
     "colors": "~1.1.2",
-    "restler": "~3.3.0"
+    "restler": "~3.3.0",
+    "xml": "~1.0.0"
   }
 }
