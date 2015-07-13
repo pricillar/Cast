@@ -38,7 +38,7 @@ Limitations
 * B-_OGG_ OFF! Cast 1.0 doesn't support OGG streaming, we're super sorry about that and of course we are planning to implement this at a later date. Until then, you're best off with Icecast which supports everything OGG.
 * Ad insertion! You must be M _ad_ (get it?) to think we support that yet. Sadly, Cast 1.0 doesn't support the insertion of ads yet. SHOUTcast (or Icecast KH) will do the job nicely.
 * Cast 1.0 is a little tough on old hardware at the minute. Because Cast is still being streamlined to perfection, it's a little heavy on memory. Whilst load levels won't be severe, you might have better loads using Icecast or SHOUTcast.
-
+* Cast 1.0 currently has no statistics yet. We're working on building these in before the final version.
 Advice
 -------
 
