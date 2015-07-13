@@ -17,7 +17,8 @@ The clue's behind the name, **Innovate** Technologies. Cast is built on the defi
 Installation
 -------
 
-MAARTEN! How do you install this? I'll leave this to you and make it slightly _punny_ when you're done with it. <3
+Installing Cast is quite simple. All you need is a computer with Node.JS installed. 
+First of all get a copy of this repo (via a zip file or git). Then run `npm install` and `node server.js`. That should do it.
 
 Motivation
 -------
