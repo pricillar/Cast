@@ -28,14 +28,11 @@ var listener = tcp.createServer(function(c) {
             c.write("icy-caps:11 \n\n");
             
             if (input.length > 1) {
-                console.log("ICY FIRST")
                 icy = parseICY(input)
                 if (typeof icy['icy-name'] === "undefined") {
-                    console.log("ICY FALSE")
                     gotICY = false
                 }
             } else {
-                console.log("ICY FALSE INPT"+input.length)
                 gotICY = false
             }
             
@@ -91,7 +88,6 @@ var parseICY = function(input) {
             out[input[id].split(':')[0]] = input[id].replace(input[id].split(':')[0] + ":", "").replace("\r", "")
         }
     }
-    console.log(out)
     return out
 }
 

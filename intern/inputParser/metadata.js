@@ -32,7 +32,7 @@ app.get('/admin.cgi', function(req, res) {
         }
         global.streams.setStreamMetadata(stream, meta)
         res.send("ok")
-        meta.stream=stream
+        meta.stream=stream©
         return
     }
 })
