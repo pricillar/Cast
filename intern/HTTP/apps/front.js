@@ -21,7 +21,7 @@ module.exports=function(app){
                 meta={}
             }
             
-            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(stream),meta:meta,streams:streams,currentStream:stream,listencount:global.streams.numberOfListerners(stream)}))
+            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(stream),meta:meta,streams:streams,currentStream:stream,listencount:global.streams.numberOfListerners(stream),hostname:global.config.hostname}))
         }else{
             res.send(indexPage({isStreaming:false}))
         }
@@ -36,7 +36,7 @@ module.exports=function(app){
             if (typeof meta ==="undefined"){
                 meta={}
             }
-            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(req.params[0]),meta:meta,streams:global.streams.getActiveStreams(),currentStream:req.params[0],listencount:global.streams.numberOfListerners(req.params[0])}))
+            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(req.params[0]),meta:meta,streams:global.streams.getActiveStreams(),currentStream:req.params[0],listencount:global.streams.numberOfListerners(req.params[0]),hostname:global.config.hostname}))
         }
     })
     

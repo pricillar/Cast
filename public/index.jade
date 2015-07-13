@@ -27,7 +27,7 @@ html(lang="en")
                     if isStreaming
                         h1.cover-heading #{streamInfo.name}
                         p.lead #{meta.song}
-                        button(onClick="pressedPlayButton('http://92.222.84.155/streams/"+currentStream+"')",class="btn btn-success btn-circle btn-xl")
+                        button(onClick="pressedPlayButton('"+hostname+"/streams/"+currentStream+"')",class="btn btn-success btn-circle btn-xl")
                             i(class="glyphicon glyphicon-play")
                         if listencount==1
                             p.listencount 1 person is listening right now.
