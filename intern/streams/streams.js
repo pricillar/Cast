@@ -49,12 +49,12 @@ var addStream = function(inputStream, conf) {
     streams[conf.stream].on("end", function(chunk) {
         streamPreBuffer[conf.stream] = ""
     })
-    
+
     streams[conf.stream].on("error", function(chunk) {
-       
+
     })
-    
-    global.hooks.runHooks("addStream",conf.stream)
+
+    global.hooks.runHooks("addStream", conf.stream)
 }
 
 var getStream = function(streamname) {
@@ -70,7 +70,7 @@ var removeStream = function(stream) {
     streamConf = _.omit(streamConf, stream)
     streamMetadata = _.omit(streamMetadata, stream)
     streamListeners = _.omit(streamListeners, stream)
-    global.hooks.runHooks('removeStream',stream)
+    global.hooks.runHooks('removeStream', stream)
 }
 
 var isStreamInUse = function(stream) {
@@ -96,8 +96,8 @@ var setStreamMetadata = function(stream, data) {
         streamPastMetadata[stream] = newMeta
         newMeta = null
     }
-    data.stream=stream
-    global.hooks.runHooks("metadata",data)
+    data.stream = stream
+    global.hooks.runHooks("metadata", data)
 }
 
 var getActiveStreams = function() {
@@ -114,7 +114,12 @@ var listenerTunedIn = function(stream, ip, client, starttime) {
     if (typeof streamListeners[stream] === "undefined") {
         streamListeners[stream] = []
     }
-    global.hooks.runHooks("listenerTunedIn",{stream:stream,ip:ip,client:client,starttime:starttime})
+    global.hooks.runHooks("listenerTunedIn", {
+        stream: stream,
+        ip: ip,
+        client: client,
+        starttime: starttime
+    })
     return streamListeners[stream].push({
         ip: ip,
         client: client,
@@ -124,17 +129,26 @@ var listenerTunedIn = function(stream, ip, client, starttime) {
 
 var listenerTunedOut = function(stream, id) {
     if (typeof id === "number" && typeof streamListeners[stream] !== "undefined") {
-        global.hooks.runHooks("listenerTunedOut",{stream:stream,ip:streamListeners[stream][id].ip,client:streamListeners[stream][id].client,starttime:streamListeners[stream][id].starttime})
+        global.hooks.runHooks("listenerTunedOut", {
+            stream: stream,
+            ip: streamListeners[stream][id].ip,
+            client: streamListeners[stream][id].client,
+            starttime: streamListeners[stream][id].starttime
+        })
         delete streamListeners[stream][id]
     }
 }
 
-var numberOfListerners = function(stream) {
+var getListeners = function(stream) {
     if (typeof streamListeners[stream] === "undefined") {
-        return 0
+        return []
     } else {
-        return _.without(streamListeners[stream], undefined).length
+        return _.without(streamListeners[stream], undefined)
     }
+}
+
+var numberOfListerners = function(stream) {
+    return getListeners(stream).length
 }
 
 var getPreBuffer = function(stream) {
@@ -158,6 +172,7 @@ module.exports.getActiveStreams = getActiveStreams
 module.exports.primaryStream = primaryStream
 module.exports.listenerTunedIn = listenerTunedIn
 module.exports.listenerTunedOut = listenerTunedOut
+module.exports.getListeners = getListeners
 module.exports.numberOfListerners = numberOfListerners
 module.exports.getPreBuffer = getPreBuffer
 module.exports.getPastMedatada = getPastMedatada

@@ -17,7 +17,13 @@ module.exports = function(app) {
         res.json(global.streams.getActiveStreams())
     })
     
-    
+    app.get("/api/*/*/listeners",function(req, res) {
+        if (req.params[1]!==global.config.apikey){
+            res.json({error:"Invalid API key"})
+            return
+        }
+        res.json(global.streams.getListeners(req.params[0]))
+    })
 
 }
 
