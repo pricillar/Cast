@@ -10,7 +10,7 @@
     },
     
     "directories":{
-        "Icecast":["http://dir.xiph.org/cgi-bin/yp-cgi", "http://yp.shoutcast.com"]
+        "Icecast":[]
     },
 
     "streams": [{

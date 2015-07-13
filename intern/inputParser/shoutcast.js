@@ -74,6 +74,10 @@ var listener = tcp.createServer(function(c) {
         global.streams.removeStream(stream)
     });
     
+    c.on('error', function() {
+        global.streams.removeStream(stream)
+    });
+    
 });
 
 var listenOn = function(port) {
