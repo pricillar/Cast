@@ -95,6 +95,10 @@ var httpHandler = function(app) {
                 res = null
             }
         })
+        
+        stream.on("error", function(chunk) {
+            //leave it unhandled for now
+        })
 
         var listenerID = global.streams.listenerTunedIn(req.params[0], req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
 

@@ -49,6 +49,11 @@ var addStream = function(inputStream, conf) {
     streams[conf.stream].on("end", function(chunk) {
         streamPreBuffer[conf.stream] = ""
     })
+    
+    streams[conf.stream].on("error", function(chunk) {
+        //leave it unhandled for now
+    })
+    
     global.hooks.runHooks("addStream",conf.stream)
 }
 
