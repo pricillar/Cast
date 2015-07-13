@@ -11,7 +11,8 @@ if (global.config.httpPort !== 0){
 }
 var streamOutput = require("../streams/httphandler.js"),
 	streamInput = require("../streams/inputhandler.js")
-
+	
+app.enable('trust proxy');
 app.use(function(req, res, next) {
 	res.setHeader('X-Powered-By', 'Cast 1.0')
 	res.setHeader('Server',"Cast/1.0")
