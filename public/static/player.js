@@ -18,9 +18,11 @@ var audio=null;
 
 var pressedPlayButton=function(stream){
     if (audio==null){
+        document.getElementById("playStopButton").className = "glyphicon glyphicon-stop"
         audio=new Audio(stream)
         audio.play()
     }else{
+        document.getElementById("playStopButton").className = "glyphicon glyphicon-play"
         audio.stop()
         audio=null
     }

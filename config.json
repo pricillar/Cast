@@ -4,7 +4,7 @@
     "httpsCert": "/cert",
     "httpsKey": "/key",
     "hostname": "http://92.222.84.155",
-    "apikey":"MzthT2Pk9yVFu2FQJr3ueMeUi2YhF3"
+    "apikey":"MzthT2Pk9yVFu2FQJr3ueMeUi2YhF3",
 
     "input": {
         "SHOUTcast": 8000

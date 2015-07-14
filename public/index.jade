@@ -28,7 +28,7 @@ html(lang="en")
                         h1.cover-heading #{streamInfo.name}
                         p.lead #{meta.song}
                         button(onClick="pressedPlayButton('"+hostname+"/streams/"+currentStream+"')",class="btn btn-success btn-circle btn-xl")
-                            i(class="glyphicon glyphicon-play")
+                            i(class="glyphicon glyphicon-play",id="playStopButton")
                         if listencount==1
                             p.listencount 1 person is listening right now.
                         else
