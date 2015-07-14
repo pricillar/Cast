@@ -23,7 +23,7 @@ var pressedPlayButton=function(stream){
         audio.play()
     }else{
         document.getElementById("playStopButton").className = "glyphicon glyphicon-play"
-        audio.stop()
+        audio.pause()
         audio=null
     }
 }
