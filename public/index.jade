@@ -5,6 +5,8 @@ html(lang="en")
     link(href="//cdn.shoutca.st/cast/css/bootstrap.min.css",rel="stylesheet")
     link(href="/static/cast.css",rel="stylesheet")
     script(src="/static/player.js")
+    script(src="/socket.io/socket.io.js")
+    script(src="/static/realtimeSongInfo.js")
     meta(name="viewport",content="width=device-width, initial-scale=1")
   body
     #site.site-wrapper
@@ -26,13 +28,13 @@ html(lang="en")
                 div("inner cover")
                     if isStreaming
                         h1.cover-heading #{streamInfo.name}
-                        p.lead #{meta.song}
+                        p(class="lead",id="meta-"+currentStream) #{meta.song}
                         button(onClick="pressedPlayButton('"+hostname+"/streams/"+currentStream+"')",class="btn btn-success btn-circle btn-xl")
                             i(class="glyphicon glyphicon-play",id="playStopButton")
                         if listencount==1
-                            p.listencount 1 person is listening right now.
+                            p(class="listencount",id="listencount-"+currentStream) 1 person is listening right now.
                         else
-                            p.listencount #{listencount} people are listening right now.
+                            p(class="listencount",id="listencount-"+currentStream) #{listencount} people are listening right now.
                     else
                         h1.cover-heading No streams found
                 
