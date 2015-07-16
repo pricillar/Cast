@@ -67,7 +67,7 @@ var httpHandler = function(app) {
         if (req.headers['icy-metadata'] == 1) {
             res = new icy.IcecastWriteStack(res, 8192); //DISCLAIMER: ICY is not Icecast
             var meta = streamMeta(req.params[0])
-            res.queueMetadata({StreamTitle:meta || streamConf.name || streamConf.name,StreamUrl:""});
+            res.queueMetadata({StreamTitle:meta.song || streamConf.name || streamConf.name,StreamUrl:""});
         }
 
 
