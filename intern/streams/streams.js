@@ -45,7 +45,7 @@ var addStream = function(inputStream, conf) {
     streams[conf.stream].on("data", function(chunk) {
         var newPreBuffer=[]
         var currentLength=streamPreBuffer[conf.stream].length
-        for (var i = 70; i > 0 ; i--) {
+        for (var i = 100; i > 0 ; i--) {
             if (streamPreBuffer[conf.stream].hasOwnProperty(currentLength-i)) {
                 newPreBuffer.push(streamPreBuffer[conf.stream][currentLength-i])
             }
