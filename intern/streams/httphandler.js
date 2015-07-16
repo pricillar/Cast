@@ -79,7 +79,10 @@ var httpHandler = function(app) {
             }
             res.write(chunk);
         };
-        res.write(global.streams.getPreBuffer(req.params[0]))
+        for (var id in global.streams.getPreBuffer(req.params[0])){
+            res.write(global.streams.getPreBuffer(req.params[0])[id])
+        }
+        
 
         stream.on("data", gotChunk);
 

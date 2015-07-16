@@ -34,7 +34,7 @@ var streamExists = function(streamname) {
 */
 var addStream = function(inputStream, conf) {
     conf.name = conf.name || 'Not available';
-    streamPreBuffer[conf.stream] = ""
+    streamPreBuffer[conf.stream] = []
 
     var throttleStream = stream.PassThrough();
     throttleStream.setMaxListeners(10000); //set soft max to prevent leaks
@@ -43,7 +43,15 @@ var addStream = function(inputStream, conf) {
     streamConf[conf.stream] = conf
 
     streams[conf.stream].on("data", function(chunk) {
-        streamPreBuffer[conf.stream] = chunk
+        var newPreBuffer=[]
+        var currentLength=streamPreBuffer[conf.stream].length
+        for (var i = 70; i > 0 ; i--) {
+            if (streamPreBuffer[conf.stream].hasOwnProperty(currentLength-i)) {
+                newPreBuffer.push(streamPreBuffer[conf.stream][currentLength-i])
+            }
+        }
+        newPreBuffer.push(chunk) 
+        streamPreBuffer[conf.stream] = newPreBuffer
     });
 
     streams[conf.stream].on("end", function(chunk) {
