@@ -24,7 +24,7 @@ html(lang="en")
                                     else
                                         li
                                             a(href="/pub/"+stream) #{stream}
-                        
+
                 div("inner cover")
                     if isStreaming
                         h1.cover-heading #{streamInfo.name}
@@ -37,6 +37,5 @@ html(lang="en")
                             p(class="listencount",id="listencount-"+currentStream) #{listencount} people are listening right now.
                     else
                         h1.cover-heading No streams found
-                
-            
-    
+
+
