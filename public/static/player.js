@@ -1,3 +1,5 @@
+/* exported pressedPlayButton */
+
 /**
  * Cast Player
  *
@@ -14,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var audio=null;
+var audio = null;
 
-var pressedPlayButton=function(stream){
-    if (audio==null){
-        document.getElementById("playStopButton").className = "glyphicon glyphicon-stop"
-        audio=new Audio(stream)
-        audio.play()
-    }else{
-        document.getElementById("playStopButton").className = "glyphicon glyphicon-play"
-        audio.pause()
-        audio=null
+var pressedPlayButton = function (stream) {
+    if (audio === null) {
+        document.getElementById('playStopButton').className = 'glyphicon glyphicon-stop';
+        audio = new Audio(stream);
+        audio.play();
+    } else {
+        document.getElementById('playStopButton').className = 'glyphicon glyphicon-play';
+        audio.pause();
+        audio = null;
     }
-}
+};
