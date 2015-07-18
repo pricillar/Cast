@@ -26,6 +26,7 @@ var pressedPlayButton = function (stream) {
     } else {
         document.getElementById('playStopButton').className = 'glyphicon glyphicon-play';
         audio.pause();
+        audio.src = '';
         audio = null;
     }
 };
