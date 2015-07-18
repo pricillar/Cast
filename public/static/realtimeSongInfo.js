@@ -4,7 +4,7 @@ var socket = io();
 socket.on('metadata', function onMetadataUpdate (msg) {
     var metadataElement = document.getElementById('meta-' + msg.stream);
     if (metadataElement !== null) {
-        metadataElement.textContent = msg.song;
+        metadataElement.textContent = decodeURIComponent(msg.song);
     }
 });
 
