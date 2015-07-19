@@ -12,6 +12,10 @@ var sendRequest = function(host, data, callback) {
         timeout: 10000,
         data: data
     }).on('complete', function(body, response) {
+        if (response === null){
+            callback("error in response")
+            return
+        }
         callback(null, response.headers)
     }).on('timeout', function() {
         callback("timed out")
