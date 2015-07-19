@@ -43,14 +43,14 @@ var addStream = function(inputStream, conf) {
     streamConf[conf.stream] = conf
 
     streams[conf.stream].on("data", function(chunk) {
-        var newPreBuffer=[]
-        var currentLength=streamPreBuffer[conf.stream].length
-        for (var i = 100; i > 0 ; i--) {
-            if (streamPreBuffer[conf.stream].hasOwnProperty(currentLength-i)) {
-                newPreBuffer.push(streamPreBuffer[conf.stream][currentLength-i])
+        var newPreBuffer = []
+        var currentLength = streamPreBuffer[conf.stream].length
+        for (var i = 100; i > 0; i--) {
+            if (streamPreBuffer[conf.stream].hasOwnProperty(currentLength - i)) {
+                newPreBuffer.push(streamPreBuffer[conf.stream][currentLength - i])
             }
         }
-        newPreBuffer.push(chunk) 
+        newPreBuffer.push(chunk)
         streamPreBuffer[conf.stream] = newPreBuffer
     });
 
@@ -115,7 +115,11 @@ var getActiveStreams = function() {
             returnStreams.push(id)
         }
     }
-    return returnStreams.sort()
+    returnStreams.sort()
+    returnStreams.sort(function(a, b) {
+        return (a.replace(/\D/g,'')) - (b.replace(/\D/g,''));
+    })
+    return returnStreams
 }
 
 var listenerTunedIn = function(stream, ip, client, starttime) {
