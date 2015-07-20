@@ -14,6 +14,11 @@ Cast is built to work with all of the widely used streaming standards in an inno
 2. Innovation
 The clue's behind the name, **Innovate** Technologies. Cast is built on the definition of innovation. The 90s was dull, boring and most importantly; 15 years ago. Cast promises an innovative solution to streaming. Combining clever, modern code with a beautiful UI; you really cannot go wrong.
 
+Documentation
+--------
+
+You can find our official documentation on [cast.readme.io/docs](https://cast.readme.io/docs). Thanks a lot to the team at readme.io for sponsoring us! 
+
 Installation
 -------
 
