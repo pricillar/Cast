@@ -25,7 +25,7 @@ module.exports = function(app) {
         res.json(global.streams.getListeners(req.params[0]))
     })
     
-    app.get("/api/*/*/end",function(req, res) {
+    app.post("/api/*/*/end",function(req, res) {
         if (req.params[1]!==global.config.apikey){
             res.status(400).json({error:"Invalid API key"})
             return
