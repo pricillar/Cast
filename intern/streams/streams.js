@@ -6,6 +6,7 @@ var http = require('http'),
 
 var configFileInfo = {} //{streamname:conf}
 var streamID = {} //id:streamname
+var inputStreams = {} //{streamname:stream}
 var streams = {} //{streamname:stream}
 var streamConf = {} //{streamname:{conf}}
 var streamPasswords = {} //{pass:Stream}
@@ -41,6 +42,7 @@ var addStream = function(inputStream, conf) {
     inputStream.pipe(throttleStream);
     streams[conf.stream] = throttleStream
     streamConf[conf.stream] = conf
+    inputStreams[conf.stream] = inputStream
 
     streams[conf.stream].on("data", function(chunk) {
         var newPreBuffer = []
@@ -63,6 +65,7 @@ var addStream = function(inputStream, conf) {
     })
 
     global.hooks.runHooks("addStream", conf.stream)
+
 }
 
 var getStream = function(streamname) {
@@ -117,7 +120,7 @@ var getActiveStreams = function() {
     }
     returnStreams.sort()
     returnStreams.sort(function(a, b) {
-        return (a.replace(/\D/g,'')) - (b.replace(/\D/g,''));
+        return (a.replace(/\D/g, '')) - (b.replace(/\D/g, ''));
     })
     return returnStreams
 }
@@ -171,6 +174,13 @@ var getPastMedatada = function(stream) {
     return streamPastMetadata[stream]
 }
 
+
+var endStream = function(stream) {
+    if (isStreamInUse(stream)) {
+        inputStreams[stream].end();
+    }
+}
+
 module.exports.addStream = addStream
 module.exports.streamExists = streamExists
 module.exports.getStream = getStream
@@ -190,3 +200,4 @@ module.exports.getPreBuffer = getPreBuffer
 module.exports.getPastMedatada = getPastMedatada
 module.exports.configFileInfo = configFileInfo
 module.exports.streamID = streamID
+module.exports.endStream = endStream

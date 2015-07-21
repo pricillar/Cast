@@ -24,6 +24,19 @@ module.exports = function(app) {
         }
         res.json(global.streams.getListeners(req.params[0]))
     })
+    
+    app.get("/api/*/*/end",function(req, res) {
+        if (req.params[1]!==global.config.apikey){
+            res.status(400).json({error:"Invalid API key"})
+            return
+        }
+        if (!global.streams.isStreamInUse(req.params[0])){
+            res.status(400).json({error:"Stream is not in use"})
+            return
+        }
+        global.streams.endStream(req.params[0])
+        res.json({result:"okay"}})
+    })
 
 }
 
