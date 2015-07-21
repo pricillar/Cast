@@ -3,8 +3,6 @@
 Cast is a modern streaming solution built to accomodate the demands of modern radio streaming.
 The 90s have long since passed, it's time that we pass with it.
 
-Cast is released under the AGPLv3 license and has been built with love and care by Maarten Eyskens and Léo Lam of Innovate Technologies.
-
 This is a *beta* version of Cast 1.0 − we have a lot of new awesome features on the roadmap. Just give us some time!
 
 ## Pillars
@@ -80,3 +78,20 @@ If you don't particularly feel Cast is for you, there's always [SHOUTcast](http:
 Based off fabulous work done by these wonderful people: [TooTallNate](https://github.com/tootallnate) and [stephen](https://gitub.com/stephen/nicercast).
 
 Thanks to [SHOUTcast](http://shoutcast.com) and [Icecast](http://icecast.org) for the inspiration. We love you guys.
+
+## License
+
+Copyright © 2015  Innovate Technologies (Maarten Eyskens, Léo Lam)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
