@@ -35,7 +35,7 @@ module.exports = function(app) {
             return
         }
         global.streams.endStream(req.params[0])
-        res.json({result:"okay"}})
+        res.json({result:"okay"})
     })
 
 }
