@@ -177,7 +177,7 @@ var getPastMedatada = function(stream) {
 
 var endStream = function(stream) {
     if (isStreamInUse(stream)) {
-        inputStreams[stream].end();
+        inputStreams[stream].destroy();
     }
 }
 
