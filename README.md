@@ -2,6 +2,7 @@
 
 Cast is a modern streaming solution built to accomodate the demands of modern radio streaming.
 The 90s have long since passed, it's time that we pass with it.
+
 Cast is released under the AGPLv3 license and has been built with love and care by Maarten Eyskens and Léo Lam of Innovate Technologies.
 
 This is a *beta* version of Cast 1.0 − we have a lot of new awesome features on the roadmap. Just give us some time!
@@ -47,6 +48,7 @@ The problem with both of them is that they're based on code written by exhausted
 This doesn't make either of them bad, it just means it may not be for everyone.
 This makes using Icecast and SHOUTcast a little more difficult than we think it has to be,
 so we've built Cast from the ground up using Node.js to reduce the tears and increase the laughs.
+
 We have years of experience with both of those and combined the best features of the two but also some of our own ideas.
 Not only this, but there's an annoying snag with SHOUTcast and Icecast.
 It's also quite difficult to build off of, we're changing that with Cast.
@@ -61,11 +63,11 @@ We introduce a ***gorgeous*** streaming page with an equally gorgeous UI.
 
 (does anyone remember who's famous for singing that?) Anyway, like everything... Cast does have a few downfalls for its humble version 1.0. Listed below are these limitations and alternatives and/or what we're planning to do to eliminate those in upcoming versions.
 
-* Big audience? Cast isn't built to cater for large amounts of listeners. For this, it's best to stick with Icecast (we're plannning to accomadate you guys soon!).
-* B-_OGG_ OFF! Cast 1.0 doesn't support OGG streaming, we're super sorry about that and of course we are planning to implement this at a later date. Until then, you're best off with Icecast which supports everything OGG.
-* Ad insertion! You must be M _ad_ (get it?) to think we support that yet. Sadly, Cast 1.0 doesn't support the insertion of ads yet. SHOUTcast (or Icecast KH) will do the job nicely.
-* Cast 1.0 is a little tough on old hardware at the minute. Because Cast is still being streamlined to perfection, it's a little heavy on memory. Whilst load levels won't be severe, you might have better loads using Icecast or SHOUTcast.
-* Cast 1.0 currently has no statistics yet. We're working on building these in before the final version.
+* *Handling large amounts of listeners*: Big audience? Cast isn't built to cater for large amounts of listeners. For this, it's best to stick with Icecast (we're plannning to accomadate you guys soon!).
+* *No support for OGG*: B-_OGG_ OFF! Cast 1.0 doesn't support OGG streaming, we're super sorry about that and of course we are planning to implement this at a later date. Until then, you're best off with Icecast which supports everything OGG.
+* *No support for ad insertion*: You must be M _ad_ (get it?) to think we support that yet. Sadly, Cast 1.0 doesn't support the insertion of ads yet. SHOUTcast (or Icecast KH) will do the job nicely.
+* *Resource usage*: Cast 1.0 is a little tough on old hardware at the minute. Because Cast is still being streamlined to perfection, it's a little heavy on memory. Whilst load levels won't be severe, you might have better loads using Icecast or SHOUTcast.
+* *No support for statistics*: Cast 1.0 currently has no statistics yet. We're working on building these in before the final version.
 
 There's a saying in England, mainly used by distressed mothers to try and get their children to eat their dinner without complaining.
 > If you don't like it, _lump_ it!
@@ -75,4 +77,6 @@ If you don't particularly feel Cast is for you, there's always [SHOUTcast](http:
 
 ## Credit
 
-Based off fabulous work done by these wonderful people: [TooTallNate](https://github.com/tootallnate) and [stephen](https://gitub.com/stephen/nicercast). Thanks to [SHOUTcast](http://shoutcast.com) and [Icecast](http://icecast.org) for the inspiration. We love you guys.
+Based off fabulous work done by these wonderful people: [TooTallNate](https://github.com/tootallnate) and [stephen](https://gitub.com/stephen/nicercast).
+
+Thanks to [SHOUTcast](http://shoutcast.com) and [Icecast](http://icecast.org) for the inspiration. We love you guys.
