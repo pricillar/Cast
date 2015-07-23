@@ -6,6 +6,12 @@ socket.on('metadata', function onMetadataUpdate (msg) {
     if (metadataElement !== null) {
         metadataElement.textContent = decodeURIComponent(msg.song);
     }
+    var djnameElement = document.getElementById('djname-' + msg.stream);
+    if (djnameElement !== null) {
+        if (typeof msg.djname !== "undefined"){
+            djnameElement.textContent = decodeURIComponent(msg.djname);
+        }
+    }
 });
 
 socket.on('listenerCountChange', function onListenerCountChange (msg) {

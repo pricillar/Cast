@@ -28,7 +28,8 @@ app.get('/admin.cgi', function(req, res) {
             artist: req.query.artist,
             song: req.query.song,
             date: req.query.date,
-            album: req.query.album
+            album: req.query.album,
+            djname: req.query.djname,
         }
         global.streams.setStreamMetadata(stream, meta)
         res.send("ok")

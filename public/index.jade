@@ -20,7 +20,7 @@ html(lang="en")
                                 each stream in streams
                                     if currentStream==stream
                                         li.active
-                                            a(href="/pub/"+stream) #{stream}
+                                            a(href="/pub/"+stream) #{stream || ''}
                                     else
                                         li
                                             a(href="/pub/"+stream) #{stream}
@@ -28,6 +28,7 @@ html(lang="en")
                 div.inner.cover
                     if isStreaming
                         h1.cover-heading #{streamInfo.name}
+                        p.lead(id="djname-"+currentStream) #{meta.djname}
                         p.lead(id="meta-"+currentStream) #{meta.song}
                         button.btn.btn-success.btn-circle.btn-xl(onClick="pressedPlayButton('"+hostname+"/streams/"+currentStream+"')")
                             i.glyphicon.glyphicon-play#playStopButton
