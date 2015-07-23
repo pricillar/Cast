@@ -42,5 +42,8 @@ app.get('/',function(req, res) {
     res.send("You hit the Cast metadata input server. If you are looking for good music try to remove the port from the URL")
 })
 
+app.get('/7.html',function(req, res) {
+    res.send("0,0,0,99999,0,0,")
+})
 
 module.exports.listenOn = listenOn
