@@ -15,23 +15,23 @@ var httpHandler = function(app) {
             res.status(404).send("Stream not found")
             return
         }
-        
-        if (req.params[0].split(".").length > 1){
-            if (req.params[0].split(".")[1]==="pls"){
-                servePLS(req,res)
+
+        if (req.params[0].split(".").length > 1) {
+            if (req.params[0].split(".")[1] === "pls") {
+                servePLS(req, res)
                 return
             }
-            if (req.params[0].split(".")[1]==="m3u"){
-                serveM3U(req,res)
+            if (req.params[0].split(".")[1] === "m3u") {
+                serveM3U(req, res)
                 return
             }
         }
-        
-        if (!global.streams.streamExists(req.params[0])){
+
+        if (!global.streams.streamExists(req.params[0])) {
             res.status(404).send("Stream not found")
             return
         }
-        
+
         //get stream
 
         var stream = global.streams.getStream(req.params[0])
@@ -55,6 +55,11 @@ var httpHandler = function(app) {
             "Expires": "Sun, 9 Feb 2014 15:32:00 GMT"
         }
 
+        if (req.headers['user-agent'].indexOf("RealMedia") > -1) {
+            //RealMedia players can't read the ICY metadata properly
+            req.headers['icy-metadata'] = 0
+        }
+
         //send icy header
         if (req.headers['icy-metadata'] == 1) {
             headers['icy-metaint'] = 8192;
@@ -67,22 +72,28 @@ var httpHandler = function(app) {
         if (req.headers['icy-metadata'] == 1) {
             res = new icy.IcecastWriteStack(res, 8192); //DISCLAIMER: ICY is not Icecast
             var meta = streamMeta(req.params[0])
-            res.queueMetadata({StreamTitle:meta.song || streamConf.name || streamConf.name,StreamUrl:""});
+            res.queueMetadata({
+                StreamTitle: meta.song || streamConf.name || streamConf.name,
+                StreamUrl: ""
+            });
         }
 
 
         var gotChunk = function(chunk) {
             var meta = streamMeta(req.params[0])
             if (req.headers['icy-metadata'] == 1 && typeof meta !== "undefined" && typeof meta.song === "string" && prevMetadata != meta.song) {
-                res.queueMetadata({StreamTitle:meta.song || streamConf.name,StreamUrl:""});
+                res.queueMetadata({
+                    StreamTitle: meta.song || streamConf.name,
+                    StreamUrl: ""
+                });
                 prevMetadata = meta.song;
             }
             res.write(chunk);
         };
-        for (var id in global.streams.getPreBuffer(req.params[0])){
+        for (var id in global.streams.getPreBuffer(req.params[0])) {
             res.write(global.streams.getPreBuffer(req.params[0])[id])
         }
-        
+
 
         stream.on("data", gotChunk);
 
@@ -98,7 +109,7 @@ var httpHandler = function(app) {
                 res = null
             }
         })
-        
+
         stream.on("error", function(chunk) {
             //leave it unhandled for now
         })
@@ -106,7 +117,7 @@ var httpHandler = function(app) {
         var listenerID = global.streams.listenerTunedIn(req.params[0], req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
 
         req.connection.on("close", function() {
-            if (req !== null){
+            if (req !== null) {
                 global.streams.listenerTunedOut(req.params[0], listenerID)
                 stream.removeListener("data", gotChunk);
                 stream = null
@@ -118,33 +129,33 @@ var httpHandler = function(app) {
         });
 
     })
-    
-    var servePLS=function(req, res) {
-        var stream=req.params[0].split(".")[0]
+
+    var servePLS = function(req, res) {
+        var stream = req.params[0].split(".")[0]
         if (typeof stream === "undefined" || stream === "" || !global.streams.streamExists(stream)) {
             res.status(404).send("Stream not found")
             return
         }
-        var pls="[playlist]\n"
-        pls+="numberofentries=1\n"
-        pls+="File1="+global.config.hostname+"/streams/"+stream+"\n"
-        pls+="Title1="+global.streams.getStreamConf(stream).name+"\n"
-        pls+="Length1=-1"+"\n"
-        pls+="version=2"
-        
-        res.setHeader("Content-Type","audio/x-scpls")
+        var pls = "[playlist]\n"
+        pls += "numberofentries=1\n"
+        pls += "File1=" + global.config.hostname + "/streams/" + stream + "\n"
+        pls += "Title1=" + global.streams.getStreamConf(stream).name + "\n"
+        pls += "Length1=-1" + "\n"
+        pls += "version=2"
+
+        res.setHeader("Content-Type", "audio/x-scpls")
         res.send(pls)
     }
-    
-    var serveM3U=function(req, res) {
-        var stream=req.params[0].split(".")[0]
+
+    var serveM3U = function(req, res) {
+        var stream = req.params[0].split(".")[0]
         if (typeof stream === "undefined" || stream === "" || !global.streams.streamExists(stream)) {
             res.status(404).send("Stream not found")
             return
         }
-        
-        res.setHeader("Content-Type","audio/x-mpegurl")
-        res.send(global.config.hostname+"/streams/"+stream)
+
+        res.setHeader("Content-Type", "audio/x-mpegurl")
+        res.send(global.config.hostname + "/streams/" + stream)
     }
 
 }
