@@ -93,6 +93,7 @@ var getStreamMetadata = function(stream) {
 }
 
 var setStreamMetadata = function(stream, data) {
+    data.time=Math.round((new Date()).getTime() / 1000)
     streamMetadata[stream] = data
     if (typeof streamPastMetadata[stream] === "undefined") {
         streamPastMetadata[stream] = [data]
