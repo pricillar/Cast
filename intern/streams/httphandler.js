@@ -50,7 +50,7 @@ var httpHandler = function(app) {
             "icy-genre": streamConf.genre || "unknown",
             "icy-br": streamConf.bitrate || 0,
             "Access-Control-Allow-Origin": "*",
-            "X-Begin": "Thu, 30 Jan 2014 20:40:00 GMT",
+            "X-Begin": "Thu, 30 Jan 2014 17:20:00 GMT",
             "Cache-Control": "no-cache",
             "Expires": "Sun, 9 Feb 2014 15:32:00 GMT"
         }
