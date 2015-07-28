@@ -9,7 +9,13 @@ global.cast = {
 }; // defining build specific info
 
 var fs = require('fs');
-global.config = JSON.parse(fs.readFileSync(global.localdir + '/config.json', 'utf8'));
+try {
+    global.config = JSON.parse(fs.readFileSync(global.localdir + '/config.json', 'utf8'));
+} catch (error) {
+    console.error('Failed to load the config file. Are you sure you have a valid config.json?'.red);
+    console.error('The error was:', error.message.grey);
+    process.exit(1);
+}
 
 var loadCast = function loadCast () {
     global.app = require('./intern/HTTP/server.js');
