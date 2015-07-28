@@ -25,7 +25,7 @@ var addToDir = function addToDirectory (stream) {
     var info = global.streams.getStreamConf(stream);
     var hostname;
 
-    if (global.config.hostname.split(':') === 3) { // if a non standard port is used
+    if (global.config.hostname.split(':').length === 3) { // if a non standard port is used
         hostname = global.config.hostname;
     } else {
         var port = (global.config.hostname.indexOf('https://') !== -1) ? 443 : 80;
