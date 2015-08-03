@@ -24,8 +24,7 @@ var listener = tcp.createServer(function(c) {
                 c.end()
                 return
             }
-            c.write("OK2\n");
-            c.write("icy-caps:11 \n\n");
+            c.write("OK2\r\nicy-caps:11");
             
             if (input.length > 1) {
                 icy = parseICY(input)
