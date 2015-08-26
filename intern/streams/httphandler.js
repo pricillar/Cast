@@ -1,4 +1,5 @@
-var icy = require('./icy')
+var icy = require("./icy")
+var geolock = require("../geolock/geolock.js")
 
 var httpHandler = function(app) {
 
@@ -11,6 +12,11 @@ var httpHandler = function(app) {
     }
 
     app.get("/streams/*", function(req, res) {
+        
+        if (!geolock.isAllowed(req.ip)){
+            return res.status(401).send("Your country is not allowed to tune in to the stream")
+        }
+        
         if (typeof req.params[0] === "undefined" || req.params[0] === "") {
             res.status(404).send("Stream not found")
             return
