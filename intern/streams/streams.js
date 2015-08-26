@@ -1,8 +1,14 @@
-var http = require('http'),
-    stream = require('stream'),
-    _ = require("underscore"),
-    exec = require("exec-stream"),
-    spawn = require("child_process").spawn
+var http = require('http')
+var stream = require('stream')
+var _ = require("underscore")
+var exec = require("exec-stream")
+var spawn = require("child_process").spawn
+if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled && typeof global.maxmind === "undefined"){
+    global.maxmind = require("maxmind")
+    if (!global.maxmind.init(global.config.geoservices.maxmindDatabase)){
+        console.log("Error loading Maxmind Database")
+    }
+}
 
 var configFileInfo = {} //{streamname:conf}
 var streamID = {} //id:streamname
@@ -130,17 +136,23 @@ var listenerTunedIn = function(stream, ip, client, starttime) {
     if (typeof streamListeners[stream] === "undefined") {
         streamListeners[stream] = []
     }
-    global.hooks.runHooks("listenerTunedIn", {
+    
+    var info={
         stream: stream,
         ip: ip,
         client: client,
         starttime: starttime
-    })
-    return streamListeners[stream].push({
-        ip: ip,
-        client: client,
-        starttime: starttime
-    }) - 1
+    }
+    
+    if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled){
+        var ipInfo=global.maxmind.getLocation(ip)
+        if (ipInfo!==null){
+           info.country=ipInfo.countryName 
+           info.location={"latitude":ipInfo.latitude,"longitude":ipInfo.longitude}
+        }
+    }
+    global.hooks.runHooks("listenerTunedIn", info)
+    return streamListeners[stream].push(info) - 1
 }
 
 var listenerTunedOut = function(stream, id) {

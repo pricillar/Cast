@@ -1,6 +1,6 @@
 {
   "name": "Cast",
-  "version": "1.0.0.beta.2",
+  "version": "1.0.2",
   "description": "Innovative, hackable and compatible streaming",
   "main": "server.js",
   "author": "Innovate Technologies",
@@ -26,6 +26,7 @@
     "xml": "~1.0.0",
     "socket.io": "~1.3.5",
     "http-auth": "~2.2.8",
-    "maxmind": "~0.6.0"
+    "maxmind": "~0.6.0",
+    "geojson": "~0.2.1"
   }
 }
