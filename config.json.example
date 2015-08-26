@@ -28,5 +28,11 @@
             "password": "live",
             "primary": true
         }
-    ]
+    ],
+    "geolock":{
+        "enabled":false,
+        "mode":"whitelist",
+        "countryCodes":["BE","FR","GB"],
+        "maxmindDatabase":["/home/maya/maxmind/GeoIPCity.dat","/home/maya/maxmind/GeoIPCityv6.dat"]
+    }
 }
