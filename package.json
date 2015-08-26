@@ -4,7 +4,7 @@
   "description": "Innovative, hackable and compatible streaming",
   "main": "server.js",
   "author": "Innovate Technologies",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/Innovate-Technologies/Cast/issues"
   },
