@@ -1,6 +1,10 @@
 var geojson=require('geojson')
 
 module.exports = function(app) {
+    
+    app.get("/api/version", function(req, res) {
+        res.json({version:global.cast.version})
+    })
 
     app.get("/api/*/past-metadata", function(req, res) {
         res.json(global.streams.getPastMedatada(req.params[0]) || {})
