@@ -11,12 +11,64 @@ var httpHandler = function(app) {
         return
     }
 
+    app.head("/streams/*", function(req, res) {
+        if (!geolock.isAllowed(req.ip)) {
+            return res.status(401).send()
+        }
+        if (typeof req.params[0] === "undefined" || req.params[0] === "") {
+            return res.status(404).send()
+        }
+        if (req.params[0].split(".").length > 1) {
+            if (req.params[0].split(".")[1] === "pls") {
+                res.setHeader("Content-Type", "audio/x-scpls")
+                return res.send()
+            }
+            if (req.params[0].split(".")[1] === "m3u") {
+                res.setHeader("Content-Type", "audio/x-mpegurl")
+                return res.send()
+            }
+        }
+
+        if (!global.streams.streamExists(req.params[0])) {
+            return res.status(404).send()
+        }
+
+        var streamConf = global.streams.getStreamConf(req.params[0])
+
+        var headers = {
+            "Content-Type": streamConf.type || "audio/mpeg",
+            "Connection": 'close',
+            "icy-name": streamConf.name || "Unknown stream",
+            "icy-genre": streamConf.genre || "unknown",
+            "icy-br": streamConf.bitrate || 0,
+            "Access-Control-Allow-Origin": "*",
+            "X-Begin": "Thu, 30 Jan 2014 17:20:00 GMT",
+            "Cache-Control": "no-cache",
+            "Expires": "Sun, 9 Feb 2014 15:32:00 GMT"
+        }
+
+        if (req.headers['user-agent'].indexOf("RealMedia") > -1) {
+            //RealMedia players can't read the ICY metadata properly
+            req.headers['icy-metadata'] = 0
+        }
+
+        //send icy header
+        if (req.headers['icy-metadata'] == 1) {
+            headers['icy-metaint'] = 8192;
+        }
+
+        res.writeHead(200, headers);
+        res.send()
+
+    })
+
+
     app.get("/streams/*", function(req, res) {
-        
-        if (!geolock.isAllowed(req.ip)){
+
+        if (!geolock.isAllowed(req.ip)) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
-        
+
         if (typeof req.params[0] === "undefined" || req.params[0] === "") {
             res.status(404).send("Stream not found")
             return
