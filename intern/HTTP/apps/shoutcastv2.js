@@ -43,7 +43,7 @@ module.exports = function(app) {
                     "currentlisteners": global.streams.numberOfListerners(streams[id]),
                     "peaklisteners": global.streams.numberOfListerners(streams[id]), //Shall we record this?
                     "maxlisteners": 9999999, //not again...
-                    "uniquelisteners": global.streams.numberOfListerners(streams[id]), //Maybe we should perfect this a bit, fingerprinting?
+                    "uniquelisteners": global.streams.numberOfUniqueListerners(streams[id]),
                     "averagetime": 0, //Again, what is this?
                     "servergenre": global.streams.getStreamConf(streams[id]).genre,
                     "servergenre2": "", //We'll probably never support this
@@ -114,7 +114,7 @@ module.exports = function(app) {
         var stream = sidToStream(req.query.sid)
             //CURRENTLISTENERS,STREAMSTATUS,PEAKLISTENERS,MAXLISTENERS,UNIQUELISTENERS,BITRATE,SONGTITLE
         if (global.streams.isStreamInUse(stream)) {
-            res.send(global.streams.numberOfListerners(stream).toString() + ",1," + global.streams.numberOfListerners(stream).toString() + ",99999," + global.streams.numberOfListerners(stream).toString() + "," + (global.streams.getStreamConf(stream).bitrate || "0") + "," + (global.streams.getStreamMetadata(stream).song || ""))
+            res.send(global.streams.numberOfListerners(stream).toString() + ",1," + global.streams.numberOfListerners(stream).toString() + ",99999," + global.streams.numberOfUniqueListerners(stream).toString() + "," + (global.streams.getStreamConf(stream).bitrate || "0") + "," + (global.streams.getStreamMetadata(stream).song || ""))
         } else {
             res.send("0,0,0,99999,0,0,")
         }
@@ -166,7 +166,7 @@ var streamAdminStats = function(req, res) {
             "currentlisteners": global.streams.numberOfListerners(stream) || 0,
             "peaklisteners": global.streams.numberOfListerners(stream) || 0,
             "maxlisteners": 9999,
-            "uniquelisteners": global.streams.numberOfListerners(stream) || 0,
+            "uniquelisteners": global.streams.numberOfUniqueListerners(stream) || 0,
             "averagetime": 0,
             "servergenre": global.streams.getStreamConf(stream).genre || "",
             "servergenre2": "",

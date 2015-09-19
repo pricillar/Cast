@@ -3,9 +3,9 @@ var stream = require('stream')
 var _ = require("underscore")
 var exec = require("exec-stream")
 var spawn = require("child_process").spawn
-if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled && typeof global.maxmind === "undefined"){
+if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled && typeof global.maxmind === "undefined") {
     global.maxmind = require("maxmind")
-    if (!global.maxmind.init(global.config.geoservices.maxmindDatabase)){
+    if (!global.maxmind.init(global.config.geoservices.maxmindDatabase)) {
         console.log("Error loading Maxmind Database")
     }
 }
@@ -99,7 +99,7 @@ var getStreamMetadata = function(stream) {
 }
 
 var setStreamMetadata = function(stream, data) {
-    data.time=Math.round((new Date()).getTime() / 1000)
+    data.time = Math.round((new Date()).getTime() / 1000)
     streamMetadata[stream] = data
     if (typeof streamPastMetadata[stream] === "undefined") {
         streamPastMetadata[stream] = [data]
@@ -136,19 +136,22 @@ var listenerTunedIn = function(stream, ip, client, starttime) {
     if (typeof streamListeners[stream] === "undefined") {
         streamListeners[stream] = []
     }
-    
-    var info={
+
+    var info = {
         stream: stream,
         ip: ip,
         client: client,
         starttime: starttime
     }
-    
-    if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled){
-        var ipInfo=global.maxmind.getLocation(ip)
-        if (ipInfo!==null){
-           info.country=ipInfo.countryName 
-           info.location={"latitude":ipInfo.latitude,"longitude":ipInfo.longitude}
+
+    if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled) {
+        var ipInfo = global.maxmind.getLocation(ip)
+        if (ipInfo !== null) {
+            info.country = ipInfo.countryName
+            info.location = {
+                "latitude": ipInfo.latitude,
+                "longitude": ipInfo.longitude
+            }
         }
     }
     global.hooks.runHooks("listenerTunedIn", info)
@@ -175,7 +178,41 @@ var getListeners = function(stream) {
     }
 }
 
+var getUniqueListeners = function(stream) {
+    if (typeof streamListeners[stream] === "undefined") {
+        return []
+    }
+    var listeners = getListeners(stream)
+    var listenersWithUniqueCriteria = []
+
+    for (var id in listeners) {
+        if (listeners.hasOwnProperty(id)) {
+            listenersWithUniqueCriteria.push({
+                stream: listeners[id].stream,
+                client: listeners[id].client,
+                ip: listeners[id].ip
+            })
+        }
+    }
+
+    var uniqueListeners = []
+
+    for (var id in listenersWithUniqueCriteria) {
+        if (listenersWithUniqueCriteria.hasOwnProperty(id)) {
+            if (listenersWithUniqueCriteria.indexOf(listenersWithUniqueCriteria[id]) === id) {
+                uniqueListeners.push(listeners[id])
+            }
+        }
+    }
+
+    return uniqueListeners
+}
+
 var numberOfListerners = function(stream) {
+    return getListeners(stream).length
+}
+
+var numberOfUniqueListerners = function(stream) {
     return getListeners(stream).length
 }
 
@@ -208,7 +245,9 @@ module.exports.primaryStream = primaryStream
 module.exports.listenerTunedIn = listenerTunedIn
 module.exports.listenerTunedOut = listenerTunedOut
 module.exports.getListeners = getListeners
+module.exports.getUniqueListeners = getUniqueListeners
 module.exports.numberOfListerners = numberOfListerners
+module.exports.numberOfUniqueListerners = numberOfUniqueListerners
 module.exports.getPreBuffer = getPreBuffer
 module.exports.getPastMedatada = getPastMedatada
 module.exports.configFileInfo = configFileInfo
