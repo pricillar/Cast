@@ -1,8 +1,5 @@
-var http = require('http')
 var stream = require('stream')
 var _ = require("underscore")
-var exec = require("exec-stream")
-var spawn = require("child_process").spawn
 if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled && typeof global.maxmind === "undefined") {
     global.maxmind = require("maxmind")
     if (!global.maxmind.init(global.config.geoservices.maxmindDatabase)) {
@@ -20,7 +17,10 @@ var streamMetadata = {} //{streamname:{Meta}}
 var streamPastMetadata = {} //{streamname:[{Meta}]}
 var streamListeners = {} //{stream:[{listener}]}
 var streamPreBuffer = {} //{stream:prebuffer}
+var rateLimitBuffer = {} //{stream:[buffers]}
+var rateLimitingIsEnabled = false
 var primaryStream = ""
+
 
 var streamExists = function(streamname) {
     if (streams.hasOwnProperty(streamname) && stream[streamname] !== null) {
@@ -43,30 +43,54 @@ var addStream = function(inputStream, conf) {
     conf.name = conf.name || 'Not available';
     streamPreBuffer[conf.stream] = []
 
+
     var throttleStream = stream.PassThrough();
     throttleStream.setMaxListeners(10000); //set soft max to prevent leaks
-    inputStream.pipe(throttleStream);
     streams[conf.stream] = throttleStream
     streamConf[conf.stream] = conf
     inputStreams[conf.stream] = inputStream
 
-    streams[conf.stream].on("data", function(chunk) {
+    if (typeof global.config.rateLimiting === "undefined" || global.config.rateLimiting) {
+        rateLimitingIsEnabled = true
+
+        inputStreams[conf.stream].on("data", function(chunk) {
+            if (typeof rateLimitBuffer[conf.stream] === "undefined") {
+                rateLimitBuffer[conf.stream] = []
+            }
+            rateLimitBuffer[conf.stream].push(chunk)
+        });
+
+        var rateLimitInterval = setInterval(function() {
+            throttleStream.write(Buffer.concat(rateLimitBuffer[conf.stream]))
+            rateLimitBuffer[conf.stream] = []
+        }, 500)
+    } else {
+        inputStream.pipe(throttleStream);
+    }
+
+
+
+    throttleStream.on("data", function(chunk) {
         var newPreBuffer = []
         var currentLength = streamPreBuffer[conf.stream].length
-        for (var i = 100; i > 0; i--) {
+        for (var i = (rateLimitingIsEnabled ? 10 : 100); i > 0; i--) {
             if (streamPreBuffer[conf.stream].hasOwnProperty(currentLength - i)) {
                 newPreBuffer.push(streamPreBuffer[conf.stream][currentLength - i])
             }
         }
         newPreBuffer.push(chunk)
         streamPreBuffer[conf.stream] = newPreBuffer
-    });
-
-    streams[conf.stream].on("end", function(chunk) {
-        streamPreBuffer[conf.stream] = ""
     })
 
-    streams[conf.stream].on("error", function(chunk) {
+    inputStreams[conf.stream].on("end", function(chunk) {
+        streamPreBuffer[conf.stream] = ""
+        if (rateLimitingIsEnabled) {
+            rateLimitBuffer[conf.stream] = []
+            clearInterval(rateLimitInterval)
+        }
+    })
+
+    inputStreams[conf.stream].on("error", function(chunk) {
 
     })
 
