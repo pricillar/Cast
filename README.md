@@ -66,7 +66,6 @@ We introduce a ***gorgeous*** streaming page with an equally gorgeous UI.
 * *No support for ad insertion*: You must be M _ad_ (get it?) to think we support that yet. Sadly, Cast 1.0 doesn't support the insertion of ads yet. SHOUTcast (or Icecast KH) will do the job nicely.
 * *Resource usage*: Cast 1.0 is a little tough on old hardware at the minute. Because Cast is still being streamlined to perfection, it's a little heavy on memory. Whilst load levels won't be severe, you might have better loads using Icecast or SHOUTcast.
 * *No support for statistics*: Cast 1.0 currently has no statistics yet. We're working on building these in before the final version.
-*  *AutoDJ? AutoNOWAY.*: Cast 1.0 doesn't support AutoDJ yet. That's coming though. We promise.
 
 There's a saying in England, mainly used by distressed mothers to try and get their children to eat their food without complaining.
 > If you don't like it, _lump_ it!
