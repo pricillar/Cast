@@ -80,6 +80,9 @@ Based off fabulous work done by these wonderful people: [TooTallNate](https://gi
 
 Thanks to [SHOUTcast](http://shoutcast.com) and [Icecast](http://icecast.org) for the inspiration. We love you guys.
 
+This text you're reading was written by Ethan Gates and might be partially broken by Léo Lam and Maarten Eyskens.
+Feel free to correct grammatical mistakes, Ethan's not perfect.
+
 ## License
 
 Copyright © 2015  Innovate Technologies (Maarten Eyskens, Léo Lam)
