@@ -24,9 +24,9 @@ This is a *beta* version of Cast 1.0 − we have a lot of new awesome features o
 
     The clue's behind the name, **Innovate** Technologies.
     Cast is built on the definition of innovation.
-    The 90s was dull, boring and most importantly; 15 years ago.
+    The 90s were dull, boring and most importantly; 15 years ago.
     Cast promises an innovative solution to streaming.
-    Combining clever, modern code with a beautiful UI; you really cannot go wrong.
+    Combining clever, modern code with a beautiful UI; you really can't go wrong.
 
 ## Documentation
 
@@ -44,10 +44,10 @@ Then run `npm install` and `node server.js`.
 Before Cast, there was Icecast and SHOUTcast. Sure, they _work_.
 The problem with both of them is that they're based on code written by exhausted developers in _you guessed it_, the nineties.
 This doesn't make either of them bad, it just means it may not be for everyone.
-This makes using Icecast and SHOUTcast a little more difficult than we think it has to be,
+It makes using Icecast and SHOUTcast a little more difficult than we think it has to be,
 so we've built Cast from the ground up using Node.js to reduce the tears and increase the laughs.
 
-We have years of experience with both of those and combined the best features of the two but also some of our own ideas.
+We have years of experience with both of them and we've combined the best features of the two and some of our own ideas.
 Not only this, but there's an annoying snag with SHOUTcast and Icecast.
 It's also quite difficult to build off of, we're changing that with Cast.
 If you want to stem off your own project based on Cast, you can!
@@ -66,8 +66,9 @@ We introduce a ***gorgeous*** streaming page with an equally gorgeous UI.
 * *No support for ad insertion*: You must be M _ad_ (get it?) to think we support that yet. Sadly, Cast 1.0 doesn't support the insertion of ads yet. SHOUTcast (or Icecast KH) will do the job nicely.
 * *Resource usage*: Cast 1.0 is a little tough on old hardware at the minute. Because Cast is still being streamlined to perfection, it's a little heavy on memory. Whilst load levels won't be severe, you might have better loads using Icecast or SHOUTcast.
 * *No support for statistics*: Cast 1.0 currently has no statistics yet. We're working on building these in before the final version.
+*  *AutoDJ? AutoNOWAY.*: Cast 1.0 doesn't support AutoDJ yet. That's coming though. We promise.
 
-There's a saying in England, mainly used by distressed mothers to try and get their children to eat their dinner without complaining.
+There's a saying in England, mainly used by distressed mothers to try and get their children to eat their food without complaining.
 > If you don't like it, _lump_ it!
 
 Cast is still very much in its baby stages. We're learning how to walk and we'd like you to walk with us. Whilst we're by no means perfect, we're getting there... slowly and with a lot of willpower (and iced tea).
