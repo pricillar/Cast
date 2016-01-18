@@ -62,6 +62,30 @@ var httpHandler = function(app) {
 
     })
 
+    app.get("/hls/:stream/:segment", function(req, res){
+        if (!geolock.isAllowed(req.ip)) {
+            return res.status(401).send("Your country is not allowed to tune in to the stream")
+        }
+        if (!global.streams.streamExists(req.params.stream)) {
+            res.status(404).send("Stream not found")
+            return
+        }
+        var streamConf = global.streams.getStreamConf(req.params.stream)
+
+        // generate response header
+        var headers = {
+            "Content-Type": streamConf.type || "audio/mpeg",
+            "Connection": 'close',
+            "Access-Control-Allow-Origin": "*",
+            "X-Begin": "Thu, 30 Jan 2014 17:20:00 GMT",
+            "Cache-Control": "no-cache",
+            "Expires": "Sun, 9 Feb 2014 15:32:00 GMT"
+        }
+        if (!global.streams.hlsPool[req.params.stream][req.params.segment]){
+                return res.status(404).send("Segment not found")
+        }
+        res.send(global.streams.hlsPool[req.params.stream][req.params.segment])
+    })
 
     app.get("/streams/*", function(req, res) {
 
@@ -81,6 +105,10 @@ var httpHandler = function(app) {
             }
             if (req.params[0].split(".")[1] === "m3u") {
                 serveM3U(req, res)
+                return
+            }
+            if (req.params[0].split(".")[1] === "m3u8" && global.config.hls) {
+                serveM3U8(req, res)
                 return
             }
         }
@@ -214,6 +242,21 @@ var httpHandler = function(app) {
 
         res.setHeader("Content-Type", "audio/x-mpegurl")
         res.send(global.config.hostname + "/streams/" + stream)
+    }
+
+    var serveM3U8 = function(req, res) {
+        var stream = req.params[0].split(".")[0]
+        if (typeof stream === "undefined" || stream === "" || !global.streams.streamExists(stream)) {
+            res.status(404).send("Stream not found")
+            return
+        }
+
+        res.setHeader("Content-Type", "audio/x-mpegurl")
+        var response = "#EXTM3U\n#EXT-X-VERSION:5\n#EXT-X-TARGETDURATION:5\n"
+        for (var id in global.streams.hlsIndexes[stream]){
+            response+="#EXTINF:5.0,\n" + global.config.hostname + "/hls/"+stream+"/"+global.streams.hlsIndexes[stream][id]+"\n"
+        }
+        res.send(response)
     }
 
 }

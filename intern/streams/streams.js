@@ -21,6 +21,11 @@ var rateLimitBuffer = {} //{stream:[buffers]}
 var rateLimitingIsEnabled = false
 var primaryStream = ""
 
+if (global.config.hls) {
+    var hlsBuffer = {} //{stream:[buffers]}
+    var hlsPool = {} //{stream:{unixtime:song data}}
+    var hlsIndexes = {} //{stream:[indexes]}
+}
 
 var streamExists = function(streamname) {
     if (streams.hasOwnProperty(streamname) && stream[streamname] !== null) {
@@ -42,7 +47,6 @@ var streamExists = function(streamname) {
 var addStream = function(inputStream, conf) {
     conf.name = conf.name || 'Not available';
     streamPreBuffer[conf.stream] = []
-
 
     var throttleStream = stream.PassThrough();
     throttleStream.setMaxListeners(10000); //set soft max to prevent leaks
@@ -68,6 +72,34 @@ var addStream = function(inputStream, conf) {
         inputStream.pipe(throttleStream);
     }
 
+    if (global.config.hls){
+        inputStreams[conf.stream].on("data", function(chunk) {
+            if (typeof hlsBuffer[conf.stream] === "undefined") {
+                hlsBuffer[conf.stream] = []
+            }
+            hlsBuffer[conf.stream].push(chunk)
+        });
+        var hlsInterval = setInterval(function() {
+            var now = new Date().getTime()
+            if (!hlsPool[conf.stream]){
+                hlsPool[conf.stream] = {}
+            }
+            if (!hlsIndexes[conf.stream]){
+                hlsIndexes[conf.stream] = []
+            }
+            hlsPool[conf.stream][now]=(Buffer.concat(hlsBuffer[conf.stream]))
+            hlsIndexes[conf.stream].push(now)
+            if (hlsIndexes[conf.stream].length>4){
+                hlsIndexes[conf.stream] = hlsIndexes[conf.stream].slice(0,1)
+            }
+            hlsBuffer[conf.stream] = []
+            for (var id in hlsPool[conf.stream]){
+                if (id <= now - (5000*20)){
+                    delete hlsPool[conf.stream][id]
+                }
+            }
+        }, 5000)
+    }
 
 
     throttleStream.on("data", function(chunk) {
@@ -87,6 +119,7 @@ var addStream = function(inputStream, conf) {
         if (rateLimitingIsEnabled) {
             rateLimitBuffer[conf.stream] = []
             clearInterval(rateLimitInterval)
+            clearInterval(hlsInterval)
         }
     })
 
@@ -277,3 +310,5 @@ module.exports.getPastMedatada = getPastMedatada
 module.exports.configFileInfo = configFileInfo
 module.exports.streamID = streamID
 module.exports.endStream = endStream
+module.exports.hlsPool = hlsPool
+module.exports.hlsIndexes = hlsIndexes
