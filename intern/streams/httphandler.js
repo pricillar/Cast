@@ -70,6 +70,16 @@ var httpHandler = function(app) {
             res.status(404).send("Stream not found")
             return
         }
+        if (!req.query.id || !global.streams.listenerIdExists(req.params.stream, req.query.id, req.ip, req.headers["user-agent"])){
+            return res.status(401).send("Invalid id")
+        }
+
+        if (!global.streams.hlsLastHit[req.params.stream]){
+            global.streams.hlsLastHit[req.params.stream] = {}
+        }
+
+        global.streams.hlsLastHit[req.params.stream][req.query.id] = Math.round((new Date()).getTime() / 1000)
+
         var streamConf = global.streams.getStreamConf(req.params.stream)
 
         // generate response header
@@ -251,10 +261,20 @@ var httpHandler = function(app) {
             return
         }
 
+        if (!req.query.id || !global.streams.listenerIdExists(stream, req.query.id, req.ip, req.headers["user-agent"])){
+            var listenerID = global.streams.listenerTunedIn(stream, req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
+            if (!global.streams.hlsLastHit[req.params.stream]){
+                global.streams.hlsLastHit[stream] = {}
+            }
+            global.streams.hlsLastHit[stream][listenerID] = Math.round((new Date()).getTime() / 1000)
+            return res.redirect("/streams/" + stream + ".m3u8?id=" + listenerID);
+        }
+
+        global.streams.hlsLastHit[stream][req.query.id] = Math.round((new Date()).getTime() / 1000)
         res.setHeader("Content-Type", "audio/x-mpegurl")
-        var response = "#EXTM3U\n#EXT-X-VERSION:5\n#EXT-X-TARGETDURATION:5\n"
+        var response = "#EXTM3U\n#EXT-X-VERSION:5\n#EXT-X-TARGETDURATION:5\n#EXT-X-MEDIA-SEQUENCE:"+global.streams.hlsDeleteCount[stream]+"\n"
         for (var id in global.streams.hlsIndexes[stream]){
-            response+="#EXTINF:5.0,\n" + global.config.hostname + "/hls/"+stream+"/"+global.streams.hlsIndexes[stream][id]+"\n"
+            response+="#EXTINF:2.0,\n" + global.config.hostname + "/hls/"+stream+"/"+global.streams.hlsIndexes[stream][id]+"?id=" + req.query.id + "\n"
         }
         res.send(response)
     }
