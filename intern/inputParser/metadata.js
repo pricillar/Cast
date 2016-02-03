@@ -1,6 +1,6 @@
 var app = require("express")(),
     http
-    
+
 var listenOn = function(port) {
     http = require('http').createServer(app).listen(port)
 }
@@ -18,9 +18,17 @@ app.get('/admin.cgi', function(req, res) {
     var stream = global.streams.streamPasswords[req.query.pass]
 
     if (req.query.mode === "updinfo") {
-        
+
         if (req.query.song === "Advert: - Advert:"){
             //Never mind... SHOUTcast is better for this
+        }
+        if (req.query.song && req.query.song.indexOf("-") >= 0) {
+            if (!req.query.title) {
+                req.query.title = req.query.song.split("-")[1].trim()
+            }
+            if (!req.query.artist) {
+                req.query.artist = req.query.song.split("-")[0].trim()
+            }
         }
         var meta={
             genre: req.query.genre,

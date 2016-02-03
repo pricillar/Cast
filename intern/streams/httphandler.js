@@ -94,7 +94,9 @@ var httpHandler = function(app) {
         if (!global.streams.hlsPool[req.params.stream][req.params.segment]){
                 return res.status(404).send("Segment not found")
         }
-        res.send(global.streams.hlsPool[req.params.stream][req.params.segment])
+        res.writeHead(200, headers);
+        res.write(global.streams.hlsPool[req.params.stream][req.params.segment])
+        res.end()
     })
 
     app.get("/streams/*", function(req, res) {
