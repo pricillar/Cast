@@ -20,7 +20,38 @@ var streamPreBuffer = {} //{stream:prebuffer}
 var rateLimitBuffer = {} //{stream:[buffers]}
 var rateLimitingIsEnabled = false
 var primaryStream = ""
+var latestListenerID = {} //{stream:id}
 
+if (global.config.hls) {
+    var hlsBuffer = {} //{stream:[buffers]}
+    var hlsPool = {} //{stream:{unixtime:song data}}
+    var hlsDeleteCount = {} //{stream:count}
+    var hlsLastHit = {} //{stream:{id:unixtime}}
+    var hlsIndexes = {} //{stream:[indexes]}
+    setInterval(function(){
+        var now = Math.round((new Date()).getTime() / 1000)
+        for (var id in streams){
+            if (streams.hasOwnProperty(id)){
+                var listeners = getListeners(id)
+                for (var lid in listeners) {
+                    if (listeners.hasOwnProperty(lid)) {
+                        if (listeners[lid].hls) {
+                            if (!hlsLastHit[id]) {
+                                hlsLastHit[id] = {}
+                            }
+                            if (!hlsLastHit[id][listeners[lid].id]){
+                                hlsLastHit[id][listeners[lid].id] = now
+                            }
+                            if (hlsLastHit[id][listeners[lid].id] < now-20 ){
+                                listenerTunedOut(id, listeners[lid].id)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }, 1000)
+}
 
 var streamExists = function(streamname) {
     if (streams.hasOwnProperty(streamname) && stream[streamname] !== null) {
@@ -42,7 +73,6 @@ var streamExists = function(streamname) {
 var addStream = function(inputStream, conf) {
     conf.name = conf.name || 'Not available';
     streamPreBuffer[conf.stream] = []
-
 
     var throttleStream = stream.PassThrough();
     throttleStream.setMaxListeners(10000); //set soft max to prevent leaks
@@ -68,6 +98,37 @@ var addStream = function(inputStream, conf) {
         inputStream.pipe(throttleStream);
     }
 
+    if (global.config.hls){
+        hlsDeleteCount[conf.stream] = 0
+
+        inputStreams[conf.stream].on("data", function(chunk) {
+            if (typeof hlsBuffer[conf.stream] === "undefined") {
+                hlsBuffer[conf.stream] = []
+            }
+            hlsBuffer[conf.stream].push(chunk)
+        });
+        var hlsInterval = setInterval(function() {
+            var now = new Date().getTime()
+            if (!hlsPool[conf.stream]){
+                hlsPool[conf.stream] = {}
+            }
+            if (!hlsIndexes[conf.stream]){
+                hlsIndexes[conf.stream] = []
+            }
+            hlsPool[conf.stream][now]=(Buffer.concat(hlsBuffer[conf.stream]))
+            hlsBuffer[conf.stream] = []
+            hlsIndexes[conf.stream].push(now)
+            if (hlsIndexes[conf.stream].length>7){
+                hlsIndexes[conf.stream] = hlsIndexes[conf.stream].slice(1,hlsIndexes.length)
+                hlsDeleteCount[conf.stream]++
+            }
+            for (var id in hlsPool[conf.stream]){
+                if (id < now - (5000*20)){
+                    delete hlsPool[conf.stream][id]
+                }
+            }
+        }, 5000)
+    }
 
 
     throttleStream.on("data", function(chunk) {
@@ -87,6 +148,7 @@ var addStream = function(inputStream, conf) {
         if (rateLimitingIsEnabled) {
             rateLimitBuffer[conf.stream] = []
             clearInterval(rateLimitInterval)
+            clearInterval(hlsInterval)
         }
     })
 
@@ -156,18 +218,25 @@ var getActiveStreams = function() {
     return returnStreams
 }
 
-var listenerTunedIn = function(stream, ip, client, starttime) {
+var listenerTunedIn = function(stream, ip, client, starttime, hls) {
     if (typeof streamListeners[stream] === "undefined") {
         streamListeners[stream] = []
     }
+
+    if (!latestListenerID[stream]){
+        latestListenerID[stream] = 0;
+    }
+
+    latestListenerID[stream]++
 
     var info = {
         stream: stream,
         ip: ip,
         client: client,
-        starttime: starttime
+        starttime: starttime,
+        hls: hls || false,
+        id: latestListenerID[stream]
     }
-
     if (typeof global.config.geoservices !== "undefined" && global.config.geoservices.enabled) {
         var ipInfo = global.maxmind.getLocation(ip)
         if (ipInfo !== null) {
@@ -179,19 +248,40 @@ var listenerTunedIn = function(stream, ip, client, starttime) {
         }
     }
     global.hooks.runHooks("listenerTunedIn", info)
-    return streamListeners[stream].push(info) - 1
+
+    streamListeners[stream].push(info)
+    return info.id
 }
 
 var listenerTunedOut = function(stream, id) {
     if (typeof id === "number" && typeof streamListeners[stream] !== "undefined") {
+        var listener = _.findWhere(streamListeners[stream],{id: id})
         global.hooks.runHooks("listenerTunedOut", {
+            id: id,
             stream: stream,
-            ip: streamListeners[stream][id].ip,
-            client: streamListeners[stream][id].client,
-            starttime: streamListeners[stream][id].starttime
+            ip: listener.ip,
+            client:listener.client,
+            starttime: listener.starttime
         })
-        delete streamListeners[stream][id]
+        streamListeners[stream] = _.without(streamListeners[stream],listener)
     }
+}
+
+var listenerIdExists = function (stream, id, ip, client) {
+    if (!streamListeners[stream]){
+        return false
+    }
+    if (typeof id !== "number"){
+        id = parseInt(id)
+    }
+    var listener = _.findWhere(streamListeners[stream],{id: id})
+    if (!listener){
+        return false
+    }
+    if (listener.ip !== ip || listener.client !== client){
+        return false
+    }
+    return true
 }
 
 var getListeners = function(stream) {
@@ -268,6 +358,7 @@ module.exports.getActiveStreams = getActiveStreams
 module.exports.primaryStream = primaryStream
 module.exports.listenerTunedIn = listenerTunedIn
 module.exports.listenerTunedOut = listenerTunedOut
+module.exports.listenerIdExists = listenerIdExists
 module.exports.getListeners = getListeners
 module.exports.getUniqueListeners = getUniqueListeners
 module.exports.numberOfListerners = numberOfListerners
@@ -277,3 +368,7 @@ module.exports.getPastMedatada = getPastMedatada
 module.exports.configFileInfo = configFileInfo
 module.exports.streamID = streamID
 module.exports.endStream = endStream
+module.exports.hlsPool = hlsPool
+module.exports.hlsIndexes = hlsIndexes
+module.exports.hlsLastHit = hlsLastHit
+module.exports.hlsDeleteCount = hlsDeleteCount
