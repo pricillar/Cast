@@ -27,6 +27,10 @@ var httpHandler = function(app) {
                 res.setHeader("Content-Type", "audio/x-mpegurl")
                 return res.send()
             }
+            if (req.params[0].split(".")[1] === "asx") {
+                res.setHeader("Content-Type", "video/x-ms-asf")
+                return res.send()
+            }
         }
 
         if (!global.streams.streamExists(req.params[0])) {
@@ -117,6 +121,10 @@ var httpHandler = function(app) {
             }
             if (req.params[0].split(".")[1] === "m3u") {
                 serveM3U(req, res)
+                return
+            }
+            if (req.params[0].split(".")[1] === "asx") {
+                serveASX(req, res)
                 return
             }
             if (req.params[0].split(".")[1] === "m3u8" && global.config.hls) {
@@ -254,6 +262,17 @@ var httpHandler = function(app) {
 
         res.setHeader("Content-Type", "audio/x-mpegurl")
         res.send(global.config.hostname + "/streams/" + stream)
+    }
+    
+    var serveASX = function(req, res) {
+        var stream = req.params[0].split(".")[0]
+        if (typeof stream === "undefined" || stream === "" || !global.streams.streamExists(stream)) {
+            res.status(404).send("Stream not found")
+            return
+        }
+
+        res.setHeader("Content-Type", "video/x-ms-asf")
+        res.send("<asx version=\"3.0\"><entry><ref href=\""+global.config.hostname + "/streams/" + stream+"\" /></entry></asx>")
     }
 
     var serveM3U8 = function(req, res) {
