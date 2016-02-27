@@ -272,7 +272,7 @@ var httpHandler = function(app) {
         }
         var streamConf = global.streams.getStreamConf(stream)
         res.setHeader("Content-Type", "video/x-ms-asf")
-        res.send("<asx version=\"3.0\"><entry><title>"+ (streamConf.name || "Unknown stream") +"</title><ref href=\""+global.config.hostname + "/streams/" + stream+"\" /></entry></asx>")
+        res.send("<asx version=\"3.0\"><title>"+ (streamConf.name || "Unknown stream") +"</title><entry><title>"+ (streamConf.name || "Unknown stream") +"</title><ref href=\""+global.config.hostname + "/streams/" + stream+"\" /></entry></asx>")
     }
 
     var serveM3U8 = function(req, res) {
