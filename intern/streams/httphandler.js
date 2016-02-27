@@ -263,16 +263,16 @@ var httpHandler = function(app) {
         res.setHeader("Content-Type", "audio/x-mpegurl")
         res.send(global.config.hostname + "/streams/" + stream)
     }
-    
+
     var serveASX = function(req, res) {
         var stream = req.params[0].split(".")[0]
         if (typeof stream === "undefined" || stream === "" || !global.streams.streamExists(stream)) {
             res.status(404).send("Stream not found")
             return
         }
-
+        var streamConf = global.streams.getStreamConf(stream)
         res.setHeader("Content-Type", "video/x-ms-asf")
-        res.send("<asx version=\"3.0\"><entry><ref href=\""+global.config.hostname + "/streams/" + stream+"\" /></entry></asx>")
+        res.send("<asx version=\"3.0\"><entry><title>"+ (streamConf.name || "Unknown stream") +"</title><ref href=\""+global.config.hostname + "/streams/" + stream+"\" /></entry></asx>")
     }
 
     var serveM3U8 = function(req, res) {
