@@ -120,6 +120,10 @@ module.exports = function(app) {
         }
     })
 
+    app.get("/played*", function (req,res) {
+        streamAdminSongHistory(req, res)
+    })
+
     app.get("/admin.cgi", auth.connect(basic), function(req, res) {
         if (typeof req.query.page === "undefined" || typeof req.query.mode === "undefined") {
             res.status(400).send('This is only for API calls.')
@@ -305,8 +309,8 @@ var streamAdminSongHistory = function(req, res) {
             })
         }
     }
-    
-     if (req.query.mode == "viewjson") {
+
+     if (req.query.mode == "viewjson" || req.query.type == "json") {
         res.json(out)
         return
     }
@@ -321,13 +325,13 @@ var streamAdminSongHistory = function(req, res) {
                 obj[objid.toUpperCase()] = out[id][objid]
                 songInfo.push(obj)
             }
-            
+
             outXML.push({
                 SONG: songInfo
             })
         }
     }
-    
+
     res.setHeader("Content-Type", "text/xml")
     res.send(xml({
         SHOUTCASTSERVER: [{
