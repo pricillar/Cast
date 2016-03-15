@@ -110,6 +110,63 @@ module.exports = function(app) {
 
     })
 
+    app.get("/stats", function(req, res) {
+        var stream = sidToStream(req.query.sid)
+        var mode = 'xml'
+        if (req.query.json == 1) {
+            mode = 'json'
+        }
+        var generalInfo = {
+            "id": id, // again we should assign numbers
+            "currentlisteners": global.streams.numberOfListerners(stream),
+            "peaklisteners": global.streams.numberOfListerners(stream), //Shall we record this?
+            "maxlisteners": 9999999, //not again...
+            "uniquelisteners": global.streams.numberOfUniqueListerners(stream),
+            "averagetime": 0, //Again, what is this?
+            "servergenre": global.streams.getStreamConf(stream).genre,
+            "servergenre2": "", //We'll probably never support this
+            "servergenre3": "",SL
+            "servergenre4": "",
+            "servergenre5": "",
+            "serverurl": global.streams.getStreamConf(stream).url || "",
+            "servertitle": global.streams.getStreamConf(stream).name || "",
+            "songtitle": global.streams.getStreamMetadata(stream).song || "",
+            "streamhits": 0, //What if my server is top 40?? got it?
+            "streamstatus": 1, //Yeah DUH
+            "backupstatus": 0, //We got no fallback
+            "streamlisted": 1, //Unable to tell with our YP mechanism
+            "streamlistederror": 200, //idem
+            "streampath": "/streams/" + stream,
+            "streamuptime": 0, //not logged
+            "bitrate": global.streams.getStreamConf(stream).bitrate || 0,
+            "samplerate": 44100, //not logged
+            "content": global.streams.getStreamConf(stream).type || "audio/mpeg"
+        }
+
+        if (mode === 'json') {
+            res.json(generalInfo)
+            return
+        }
+
+        var streamInfoXML = []
+
+        for (var id in generalInfo) {
+            if (generalInfo.hasOwnProperty(id)) {
+                var obj = {}
+                obj[id.toUpperCase()] = generalInfo[id]
+                streamInfoXML.push(obj)
+            }
+        }
+
+        //TO DO: look up how we can add multiple stream tags here
+        res.setHeader("Content-Type", "text/xml")
+        res.send(xml({
+            SHOUTCASTSERVER: streamInfoXML
+
+        }))
+
+    })
+
     app.get("/7.html", function(req, res) { //Personal option: WHY USE THIS????
         var stream = sidToStream(req.query.sid)
             //CURRENTLISTENERS,STREAMSTATUS,PEAKLISTENERS,MAXLISTENERS,UNIQUELISTENERS,BITRATE,SONGTITLE
@@ -120,7 +177,7 @@ module.exports = function(app) {
         }
     })
 
-    app.get("/played*", function (req,res) {
+    app.get("/played*", function(req, res) {
         streamAdminSongHistory(req, res)
     })
 
@@ -140,7 +197,7 @@ module.exports = function(app) {
                 streamAdminSongHistory(req, res)
                 break;
             default:
-                streamAdminOverview(req,res)
+                streamAdminOverview(req, res)
         }
     })
 
@@ -152,7 +209,7 @@ var sidToStream = function(sid) {
     if (typeof sid === "undefined") {
         stream = global.streams.primaryStream
     } else if (!isNaN(parseInt(sid))) {
-        stream = global.streams.streamID[parseInt(sid)-1]
+        stream = global.streams.streamID[parseInt(sid) - 1]
     } else {
         stream = sid
     }
@@ -260,7 +317,7 @@ var streamAdminOverview = function(req, res) {
     for (var id in out) {
         if (out.hasOwnProperty(id)) {
             var obj = {}
-            if (id !== "listeners" && id !== "songs"){
+            if (id !== "listeners" && id !== "songs") {
                 obj[id.toUpperCase()] = out[id]
                 outXML.push(obj)
             }
@@ -283,9 +340,9 @@ var streamAdminOverview = function(req, res) {
         }
     }
 
-    outXML.push([{
+    outXML.push({
         LISTENERS: xmlListeners
-    }])
+    })
 
     var xmlSongs = []
 
@@ -298,15 +355,15 @@ var streamAdminOverview = function(req, res) {
                 songInfo.push(obj)
             }
 
-            xmlSongs({
+            xmlSongs.push({
                 SONG: songInfo
             })
         }
     }
 
-    outXML.push([{
+    outXML.push({
         SONGHISTORY: xmlSongs
-    }])
+    })
 
     res.setHeader("Content-Type", "text/xml")
     res.send(xml({
@@ -464,7 +521,7 @@ var streamAdminSongHistory = function(req, res) {
         }
     }
 
-     if (req.query.mode == "viewjson" || req.query.type == "json") {
+    if (req.query.mode == "viewjson" || req.query.type == "json") {
         res.json(out)
         return
     }
