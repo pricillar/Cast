@@ -125,7 +125,7 @@ module.exports = function(app) {
     })
 
     app.get("/admin.cgi", auth.connect(basic), function(req, res) {
-        if (typeof req.query.page === "undefined" || typeof req.query.mode === "undefined") {
+        if (typeof req.query.mode === "undefined") {
             res.status(400).send('This is only for API calls.')
             return
         }
@@ -140,8 +140,7 @@ module.exports = function(app) {
                 streamAdminSongHistory(req, res)
                 break;
             default:
-                res.status(400).send('Not supported')
-                    // code
+                streamAdminOverview(req,res)
         }
     })
 
@@ -160,6 +159,162 @@ var sidToStream = function(sid) {
     return stream
 }
 
+var streamAdminOverview = function(req, res) {
+
+    var stream = sidToStream(req.query.sid)
+    var streamStatus = 0
+    if (global.streams.isStreamInUse(stream)) {
+        var out = {
+            "currentlisteners": global.streams.numberOfListerners(stream) || 0,
+            "peaklisteners": global.streams.numberOfListerners(stream) || 0,
+            "maxlisteners": 9999,
+            "uniquelisteners": global.streams.numberOfUniqueListerners(stream) || 0,
+            "averagetime": 0,
+            "servergenre": global.streams.getStreamConf(stream).genre || "",
+            "servergenre2": "",
+            "servergenre3": "",
+            "servergenre4": "",
+            "servergenre5": "",
+            "serverurl": global.streams.getStreamConf(stream).url || "",
+            "servertitle": global.streams.getStreamConf(stream).title || "",
+            "songtitle": global.streams.getStreamMetadata(stream).song || "",
+            "streamhits": 0,
+            "streamstatus": 1,
+            "backupstatus": 0,
+            "streamlisted": 0, //We never can know
+            "streamlistederror": 200,
+            "streamsource": "127.0.0.1",
+            "streampath": "/streams/" + stream,
+            "streamuptime": 2,
+            "bitrate": global.streams.getStreamConf(stream).bitrate,
+            "content": global.streams.getStreamConf(stream).type,
+            "version": global.cast.version + " (V8 (Node.JS))"
+        }
+    } else {
+        var out = {
+            "currentlisteners": 0,
+            "peaklisteners": 0,
+            "maxlisteners": 9999,
+            "uniquelisteners": 0,
+            "averagetime": 0,
+            "servergenre": "",
+            "servergenre2": "",
+            "servergenre3": "",
+            "servergenre4": "",
+            "servergenre5": "",
+            "serverurl": "",
+            "servertitle": "",
+            "songtitle": "",
+            "streamhits": 0,
+            "streamstatus": 0,
+            "backupstatus": 0,
+            "streamlisted": 0, //We never can know
+            "streamlistederror": 200,
+            "streamsource": "127.0.0.1",
+            "streampath": "/streams/" + stream,
+            "streamuptime": 2,
+            "bitrate": 0,
+            "content": "",
+            "version": global.cast.version + " (V8 (Node.JS))"
+        }
+    }
+    var pastSongs = global.streams.getPastMedatada(stream)
+    out.songs = []
+
+    for (var id in pastSongs) {
+        if (pastSongs.hasOwnProperty(id)) {
+            out.songs.push({
+                "playedat": pastSongs[id].time,
+                "title": pastSongs[id].song
+            })
+        }
+    }
+
+
+    if (req.query.mode == "viewjson") {
+        res.json(out)
+        return
+    }
+
+    var listeners = global.streams.getListeners(stream)
+
+    out.listeners = []
+
+    for (var id in listeners) {
+        if (listeners.hasOwnProperty(id)) {
+            out.listeners.push({
+                "hostname": listeners[id].ip,
+                "useragent": listeners[id].client,
+                "connecttime": (Math.round((new Date()).getTime() / 1000) - listeners[id].starttime),
+                "uid": id,
+                "type": "",
+                "referer": "",
+                "xff": "",
+                "grid": "-1",
+                "triggers": "0"
+            })
+        }
+    }
+
+    var outXML = []
+
+    for (var id in out) {
+        if (out.hasOwnProperty(id)) {
+            var obj = {}
+            if (id !== "listeners" && id !== "songs"){
+                obj[id.toUpperCase()] = out[id]
+                outXML.push(obj)
+            }
+        }
+    }
+
+    var xmlListeners = []
+
+    for (var id in out.listeners) {
+        if (out.listeners.hasOwnProperty(id)) {
+            var lstrInfo = []
+            for (var objid in out.listeners[id]) {
+                var obj = {}
+                obj[objid.toUpperCase()] = out.listeners[id][objid]
+                lstrInfo.push(obj)
+            }
+            xmlListeners.push({
+                LISTENER: lstrInfo
+            })
+        }
+    }
+
+    outXML.push([{
+        LISTENERS: xmlListeners
+    }])
+
+    var xmlSongs = []
+
+    for (var id in out.songs) {
+        if (out.songs.hasOwnProperty(id)) {
+            var songInfo = [{}]
+            for (var objid in out.songs[id]) {
+                var obj = {}
+                obj[objid.toUpperCase()] = out.songs[id][objid]
+                songInfo.push(obj)
+            }
+
+            xmlSongs({
+                SONG: songInfo
+            })
+        }
+    }
+
+    outXML.push([{
+        SONGHISTORY: xmlSongs
+    }])
+
+    res.setHeader("Content-Type", "text/xml")
+    res.send(xml({
+        SHOUTCASTSERVER: outXML
+    }))
+
+}
 
 var streamAdminStats = function(req, res) {
 
