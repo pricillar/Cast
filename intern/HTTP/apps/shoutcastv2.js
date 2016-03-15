@@ -152,7 +152,7 @@ var sidToStream = function(sid) {
     if (typeof sid === "undefined") {
         stream = global.streams.primaryStream
     } else if (!isNaN(parseInt(sid))) {
-        stream = global.streams.streamID[parseInt(sid)]
+        stream = global.streams.streamID[parseInt(sid)-1]
     } else {
         stream = sid
     }
