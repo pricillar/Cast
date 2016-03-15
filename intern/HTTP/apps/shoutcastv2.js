@@ -125,7 +125,7 @@ module.exports = function(app) {
             "averagetime": 0, //Again, what is this?
             "servergenre": global.streams.getStreamConf(stream).genre,
             "servergenre2": "", //We'll probably never support this
-            "servergenre3": "",SL
+            "servergenre3": "",
             "servergenre4": "",
             "servergenre5": "",
             "serverurl": global.streams.getStreamConf(stream).url || "",
@@ -233,7 +233,7 @@ var streamAdminOverview = function(req, res) {
             "servergenre4": "",
             "servergenre5": "",
             "serverurl": global.streams.getStreamConf(stream).url || "",
-            "servertitle": global.streams.getStreamConf(stream).title || "",
+            "servertitle": global.streams.getStreamConf(stream).name || "",
             "songtitle": global.streams.getStreamMetadata(stream).song || "",
             "streamhits": 0,
             "streamstatus": 1,
@@ -389,7 +389,7 @@ var streamAdminStats = function(req, res) {
             "servergenre4": "",
             "servergenre5": "",
             "serverurl": global.streams.getStreamConf(stream).url || "",
-            "servertitle": global.streams.getStreamConf(stream).title || "",
+            "servertitle": global.streams.getStreamConf(stream).name || "",
             "songtitle": global.streams.getStreamMetadata(stream).song || "",
             "streamhits": 0,
             "streamstatus": 1,
