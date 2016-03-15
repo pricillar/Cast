@@ -230,12 +230,6 @@ var streamAdminOverview = function(req, res) {
         }
     }
 
-
-    if (req.query.mode == "viewjson") {
-        res.json(out)
-        return
-    }
-
     var listeners = global.streams.getListeners(stream)
 
     out.listeners = []
@@ -254,6 +248,11 @@ var streamAdminOverview = function(req, res) {
                 "triggers": "0"
             })
         }
+    }
+
+    if (req.query.mode == "viewjson") {
+        res.json(out)
+        return
     }
 
     var outXML = []
