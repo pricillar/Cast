@@ -11,9 +11,9 @@
 
 .navbar-inverse {
     background-color: #232a31;
+    padding-top: 15px;
+    padding-bottom: 10px;
     .navbar-brand {
-        margin-top: 10px;
-        margin-bottom: 10px;
         font-family: 'Diavlo Light';
         font-size: 35px;
         color: white !important;
@@ -21,9 +21,9 @@
     }
 
     .navbar-nav {
-        padding-top: 10px;
         li {
             a {
+                font-size: 16px;
                 color: white !important;
                 background-color: inherit;
             }
