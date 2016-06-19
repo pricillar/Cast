@@ -36,11 +36,12 @@
 .jumbotron {
     background-image: url(../images/head.jpg);
     color: white;
+    padding-top: 90px;
+    padding-bottom: 90px;
     h1{
         text-shadow: 1px 1px 6px black;
     }
     p:first-of-type{
         text-shadow: 1px 1px 6px black;
     }
-
 }
