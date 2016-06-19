@@ -3,3 +3,31 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+
+.feature-container {
+    border-radius: 100%;
+    width: 100px;
+    height: 100px;
+    border: 3px solid black;
+    margin: auto;
+    padding-bottom: 20px;
+
+    >.fa{
+        margin: 18px;
+    }
+}
+.feature-container + h2 {
+    text-align: center;
+}
+
+footer{
+    margin-top: 40px;
+    text-align: center;
+}
+
+.feature-center {
+    height: 200px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
