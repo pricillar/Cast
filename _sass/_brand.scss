@@ -33,3 +33,14 @@
         }
     }
 }
+.jumbotron {
+    background-image: url(../images/head.jpg);
+    color: white;
+    h1{
+        text-shadow: 1px 1px 6px black;
+    }
+    p:first-of-type{
+        text-shadow: 1px 1px 6px black;
+    }
+
+}
