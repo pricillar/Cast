@@ -1,48 +1,60 @@
-var jade = require('jade');
-var fs=require("fs")
-var express=require("express")
-var geolock = require("../../geolock/geolock.js")
+import jade from "jade"
+import fs from "fs"
+import * as geolock from "../../geolock/geolock.js"
+import express from "express"
 
-var indexPage=jade.compile(fs.readFileSync(global.localdir+"/public/index.jade"));
+const indexPage = jade.compile(fs.readFileSync(localdir + "/public/index.jade"));
 
-module.exports=function(app){
-    app.get("/",function(req, res) {
-        //Index page
-        var geolockIsAllowed=geolock.isAllowed(req.ip)
-        var streams=global.streams.getActiveStreams()
-        if (streams.length>0){
-            var stream;
-            if (global.streams.isStreamInUse(global.streams.primaryStream)){
-                stream=global.streams.primaryStream
-            }else{
-                stream=streams[0]
-            }
-            
-            var meta=global.streams.getStreamMetadata(stream)
-            if (typeof meta ==="undefined"){
-                meta={}
-            }
-            
-            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(stream),meta:meta,streams:streams,currentStream:stream,listencount:global.streams.numberOfListerners(stream),hostname:global.config.hostname,geolockIsAllowed:geolockIsAllowed}))
-        }else{
-            res.send(indexPage({isStreaming:false,geolockIsAllowed:geolockIsAllowed}))
+export default (app) => {
+    app.get("/", (req, res) => {
+        // Index page
+        const geolockIsAllowed = geolock.isAllowed(req.ip)
+        const activeStreams = streams.getActiveStreams()
+        if (activeStreams.length > 0) {
+            const stream = streams.isStreamInUse(streams.primaryStream) ? streams.primaryStream : streams[0]
+            const meta = streams.getStreamMetadata(stream)
+            res.send(indexPage({
+                isStreaming: true,
+                streamInfo: streams.getStreamConf(stream),
+                meta,
+                streams: activeStreams,
+                currentStream: stream,
+                listencount: streams.numberOfListerners(stream),
+                hostname: config.hostname,
+                geolockIsAllowed,
+            }))
+        } else {
+            res.send(indexPage({
+                isStreaming: false,
+                geolockIsAllowed,
+            }))
         }
-        
+
     })
-    
-    app.get('/pub/*',function(req, res) {
-        var geolockIsAllowed=geolock.isAllowed(req.ip)
-        if (typeof req.params[0] === "undefined" || !global.streams.isStreamInUse(req.params[0])){
-            res.send(indexPage({isStreaming:false,streams:global.streams.getActiveStreams(),geolockIsAllowed:geolockIsAllowed}))
-        }else{
-            var meta=global.streams.getStreamMetadata(req.params[0])
-            if (typeof meta ==="undefined"){
-                meta={}
-            }
-            res.send(indexPage({isStreaming:true,streamInfo:global.streams.getStreamConf(req.params[0]),meta:meta,streams:global.streams.getActiveStreams(),currentStream:req.params[0],listencount:global.streams.numberOfListerners(req.params[0]),hostname:global.config.hostname,geolockIsAllowed:geolockIsAllowed}))
+
+    app.get("/pub/:stream", (req, res) => {
+        var geolockIsAllowed = geolock.isAllowed(req.ip)
+        if (!req.params.stream || !streams.isStreamInUse(req.params.stream)) {
+            res.send(indexPage({
+                isStreaming: false,
+                streams: streams.getActiveStreams(),
+                geolockIsAllowed,
+            }))
+        } else {
+            const meta = streams.getStreamMetadata(req.params.stream)
+            res.send(indexPage({
+                isStreaming: true,
+                streamInfo: streams.getStreamConf(req.params[0]),
+                meta,
+                streams: streams.getActiveStreams(),
+                currentStream: req.params[0],
+                listencount: streams.numberOfListerners(req.params[0]),
+                hostname: config.hostname,
+                geolockIsAllowed,
+            }))
         }
     })
-    
-    //serve static
-    app.use('/static', express.static(global.localdir + '/public/static'));
+
+    // serve static
+    app.use("/static", express.static(localdir + "/public/static"));
 }

@@ -1,23 +1,21 @@
-if (typeof global.config.geolock !== "undefined" && global.config.geolock.enabled && typeof global.maxmind === "undefined") {
+if (config.geolock && config.geolock.enabled && !maxmind) {
     global.maxmind = require("maxmind")
-    if (!global.maxmind.init(global.config.geolock.maxmindDatabase)){
+    if (!maxmind.init(config.geolock.maxmindDatabase)) {
         console.log("Error loading Maxmind Database")
     }
 }
 
-module.exports.isAllowed = function(ip) {
-    if (typeof global.config.geolock === "undefined" || !global.config.geolock.enabled) {
+export function isAllowed(ip) {
+    if (typeof config.geolock === "undefined" || !config.geolock.enabled) {
         return true
     }
-    var ipLocation=global.maxmind.getLocation(ip)
-    var isWhilelistMode= global.config.geolock.mode === "whitelist"
-    if (ipLocation === null){
+    let ipLocation = maxmind.getLocation(ip)
+    let isWhilelistMode = config.geolock.mode === "whitelist"
+    if (!ipLocation) {
         return isWhilelistMode
     }
-    
-    if (global.config.geolock.countryCodes.indexOf(ipLocation.countryCode) == -1){
+    if (config.geolock.countryCodes.indexOf(ipLocation.countryCode) === -1) {
         return !isWhilelistMode
-    }else{
-        return isWhilelistMode
     }
+    return isWhilelistMode
 }

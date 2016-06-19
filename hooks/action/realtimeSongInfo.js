@@ -1,21 +1,21 @@
-global.hooks.add('metadata', function onMetadataChange (meta) {
-    global.io.emit('metadata', meta);
+events.on("metadata", (meta) => {
+    io.emit("metadata", meta);
 });
 
-global.hooks.add('listenerTunedIn', function onTunein (list) {
-    setTimeout(function () {
-        global.io.emit('listenerCountChange', {
+events.on("listenerTunedIn", (list) => {
+    setTimeout(() => {
+        io.emit("listenerCountChange", {
             stream: list.stream,
-            count: global.streams.numberOfListerners(list.stream)
+            count: streams.numberOfListerners(list.stream),
         });
     }, 100);
 });
 
-global.hooks.add('listenerTunedOut', function onTuneout (list) {
-    setTimeout(function () {
-        global.io.emit('listenerCountChange', {
+events.on("listenerTunedOut", (list) => {
+    setTimeout(() => {
+        io.emit("listenerCountChange", {
             stream: list.stream,
-            count: global.streams.numberOfListerners(list.stream)
+            count: streams.numberOfListerners(list.stream),
         });
     }, 100);
 });
