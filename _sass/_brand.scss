@@ -1,0 +1,35 @@
+/* Include Diavlo Light */
+@font-face {
+    font-family: 'Diavlo Light';
+    src: url('../fonts/Diavlo-Light-Regular.ttf.woff') format('woff'),
+        url('../fonts/Diavlo-Light-Regular.ttf.svg#Diavlo-Light-Regular') format('svg'),
+        url('../fonts/Diavlo-Light-Regular.ttf.eot'),
+        url('../fonts/Diavlo-Light-Regular.ttf.eot?#iefix') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.navbar-inverse {
+    background-color: #232a31;
+    .navbar-brand {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-family: 'Diavlo Light';
+        font-size: 35px;
+        color: white !important;
+        background-color: inherit;
+    }
+
+    .navbar-nav {
+        padding-top: 10px;
+        li {
+            a {
+                color: white !important;
+                background-color: inherit;
+            }
+            a:hover {
+                border-bottom: 2px solid white;
+            }
+        }
+    }
+}
