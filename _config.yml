@@ -9,9 +9,7 @@
 title: Cast
 email: maartje@eyskens.me
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  Cast is a modern streaming solution built to accomodate the demands of modern radio streaming.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://getca.st" # the base hostname & protocol for your site
 github_username:  Innovate-Technologies
