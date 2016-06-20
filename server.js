@@ -1,7 +1,6 @@
 require("babel-polyfill");
 require("babel-register");
 require("colors");
-var wait = require("wait.for");
 
 console.log("Cast 1.0 ".rainbow);
 
@@ -31,11 +30,14 @@ var loadCast = () => {
 };
 
 if (global.config.startUpScript) { // run a script before going on eg. to load the configuration from a network disk
-    wait.launchFiber(() => {
-        var start = require(global.localdir + "/start.js");
-        wait.for(start);
+    var start = require(global.localdir + "/start.js");
+    start(function (err,res) {
+        if (err){
+            console.error(err)
+            process.exit(1);
+        }
         loadCast();
-    });
+    })
 } else {
     loadCast();
 }
