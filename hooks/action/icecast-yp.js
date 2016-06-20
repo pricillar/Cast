@@ -14,6 +14,7 @@ let sendRequest = (host, data, callback) => {
             return callback(new Error("Got an invalid response"));
         }
         callback(null, response.headers);
+	console.log(response.headers);
     }).on("timeout", () => {
         callback(new Error("Request timed out"));
     });
@@ -36,7 +37,7 @@ let addToDir = (stream) => {
             type: info.type,
             genre: info.genre,
             b: info.bitrate.toString(), // This is serious, see https://wiki.xiph.org/Icecast_Server/YP-protocol-v2
-            listenurl: hostname + "/streams/" + stream,
+            listenurl: hostname + "/streams/" + stream + "?yp=" + Math.floor(Math.random() * 10),
             url: info.url,
         }, function (err, res) {
             if (err) {
