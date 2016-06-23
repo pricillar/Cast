@@ -11,8 +11,9 @@ export default (app) => {
         const geolockIsAllowed = geolock.isAllowed(req.ip)
         const activeStreams = streams.getActiveStreams()
         if (activeStreams.length > 0) {
-            const stream = streams.isStreamInUse(streams.primaryStream) ? streams.primaryStream : streams[0]
+            const stream = streams.isStreamInUse(streams.primaryStream) ? streams.primaryStream : activeStreams[0]
             const meta = streams.getStreamMetadata(stream)
+            console.log(streams.getStreamConf(stream))
             res.send(indexPage({
                 isStreaming: true,
                 streamInfo: streams.getStreamConf(stream),
