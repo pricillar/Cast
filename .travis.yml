@@ -30,3 +30,4 @@ deploy:
   overwrite: true
   on:
     repo: Innovate-Technologies/Cast
+    tags: true
