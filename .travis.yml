@@ -18,7 +18,7 @@ script:
 - cp `which node` ./node
 - npm install
 - mv .git ../.git
-- sed 's/\/config.json/..\/config.json/g' server.js >server.js
+- sed 's/\/config.json/..\/config.json/g' server.js >server.js2 && rm -f server.js && mv server.js2 server.js
 - /tmp/makeself-release-2.2.0/makeself.sh `pwd` "/tmp/cast" "Cast 1.0" "./node server.js" >/dev/null 2>&1 
 - chmod +x /tmp/cast && cd /tmp && tar -cvzf /tmp/cast-$TRAVIS_OS_NAME.tar.gz ./cast && cd $BUILDLOC
 - mv ../.git .git
