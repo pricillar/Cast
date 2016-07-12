@@ -9,7 +9,10 @@ global.cast = {};
 
 var fs = require("fs");
 try {
-    global.config = JSON.parse(fs.readFileSync(global.localdir + "/config.json", "utf8"));
+    if (process.argv.length > 2 && fs.statSync(process.argv[process.argv.length - 1]).isFile()) {
+        var configFile = process.argv[process.argv.length - 1]
+    }
+    global.config = JSON.parse(fs.readFileSync(configFile || global.localdir + "/config.json", "utf8"));
 } catch (error) {
     console.error("Failed to load the config file. Are you sure you have a valid config.json?".red);
     console.error("The error was:", error.message.grey);
