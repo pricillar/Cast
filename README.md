@@ -33,7 +33,7 @@ Thanks a lot to the team at readme.io for sponsoring us!
 
 ## Installation
 
-Installing Cast is quite simple. All you need is a computer with Node.js installed.
+Installing Cast is quite simple. All you need is a computer with Node.js 6.0+ installed.
 First of all, get a copy of this repo (via a zip file or git).
 Then run `npm install` and `node server.js`.
 
