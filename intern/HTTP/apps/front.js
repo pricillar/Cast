@@ -45,10 +45,10 @@ export default (app) => {
             const meta = streams.getStreamMetadata(req.params.stream)
             res.send(indexPage({
                 isStreaming: true,
-                streamInfo: streams.getStreamConf(req.params[0]),
+                streamInfo: streams.getStreamConf(req.params.stream),
                 meta,
                 streams: streams.getActiveStreams(),
-                currentStream: req.params[0],
+                currentStream: req.params.stream,
                 listencount: config.hideListenerCount ? null : streams.numberOfListerners(req.params[0]),
                 hostname: config.hostname,
                 geolockIsAllowed,
