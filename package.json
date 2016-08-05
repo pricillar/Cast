@@ -1,14 +1,14 @@
 {
   "name": "Cast",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Innovative, hackable and compatible streaming",
   "main": "server.js",
   "author": "Innovate Technologies",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/Innovate-Technologies/Cast/issues"
+    "url": "https://github.com/innovate-yechnologies/Cast/issues"
   },
-  "homepage": "https://github.com/Innovate-Technologies/Cast",
+  "homepage": "https://github.com/innovate-yechnologies/Cast",
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-polyfill": "^6.9.1",
