@@ -248,23 +248,17 @@ const listenerTunedIn = (streamName, ip, client, starttime, hls) => {
             }
         }
     }
-    events.emit("listenerTunedIn", info)
 
-    streamListeners[streamName].push(info)
+    streamListeners[streamName][info.id] = info
+    events.emit("listenerTunedIn", info)
     return info.id
 }
 
 const listenerTunedOut = (streamName, id) => {
     if (typeof id === "number" && streamListeners[streamName]) {
-        var listener = _.findWhere(streamListeners[streamName], {id: id})
-        events.emit("listenerTunedOut", {
-            id: id,
-            stream: streamName,
-            ip: listener.ip,
-            client: listener.client,
-            starttime: listener.starttime,
-        })
+        const listener = streamListeners[streamName][id]
         streamListeners[streamName] = _.without(streamListeners[streamName], listener)
+        events.emit("listenerTunedOut", listener)
     }
 }
 
@@ -371,6 +365,7 @@ module.exports.listenerTunedIn = listenerTunedIn
 module.exports.listenerTunedOut = listenerTunedOut
 module.exports.listenerIdExists = listenerIdExists
 module.exports.getListeners = getListeners
+module.exports.streamListeners = streamListeners
 module.exports.getUniqueListeners = getUniqueListeners
 module.exports.numberOfListerners = numberOfListerners
 module.exports.numberOfUniqueListerners = numberOfUniqueListerners
