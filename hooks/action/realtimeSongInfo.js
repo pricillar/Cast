@@ -1,8 +1,14 @@
 events.on("metadata", (meta) => {
+    if (!meta) {
+        return
+    }
     io.emit("metadata", meta);
 });
 
 events.on("listenerTunedIn", (list) => {
+    if (!list) {
+        return
+    }
     setTimeout(() => {
         io.emit("listenerCountChange", {
             stream: list.stream,
@@ -12,6 +18,9 @@ events.on("listenerTunedIn", (list) => {
 });
 
 events.on("listenerTunedOut", (list) => {
+    if (!list) {
+        return
+    }
     setTimeout(() => {
         io.emit("listenerCountChange", {
             stream: list.stream,
