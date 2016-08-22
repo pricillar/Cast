@@ -13,7 +13,6 @@ export default (app) => {
         if (activeStreams.length > 0) {
             const stream = streams.isStreamInUse(streams.primaryStream) ? streams.primaryStream : activeStreams[0]
             const meta = streams.getStreamMetadata(stream)
-            console.log(streams.getStreamConf(stream))
             res.send(indexPage({
                 isStreaming: true,
                 streamInfo: streams.getStreamConf(stream),

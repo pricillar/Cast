@@ -4,8 +4,6 @@ export default (app) => {
         const activeStreams = streams.getActiveStreams()
         let iceStreams = []
         for (let stream of activeStreams) {
-            console.log(stream);
-            console.log(streams.getStreamConf(stream).bitrate);
             iceStreams.push({
                 "audio_info": "bitrate=" + (streams.getStreamConf(stream).bitrate) + ";",
                 "bitrate": streams.getStreamConf(stream).bitrate,
