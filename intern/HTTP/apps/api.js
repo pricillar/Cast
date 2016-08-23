@@ -39,7 +39,7 @@ export default (app) => {
         if (req.params.key !== global.config.apikey) {
             return res.status(400).json({error: "Invalid API key"})
         }
-        if (!config.geoservices || config.geoservices.enabled) {
+        if (!config.geoservices || !config.geoservices.enabled) {
             return res.status(500).json({error: "GeoServices is disabled"})
         }
 
