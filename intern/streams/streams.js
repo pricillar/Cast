@@ -250,7 +250,7 @@ const listenerTunedIn = (streamName, ip, client, starttime, hls) => {
     }
 
     streamListeners[streamName][info.id] = info
-    events.emit("listenerTunedIn", info)
+    events.emit("listenerTunedIn", _.clone(info))
     return info.id
 }
 
