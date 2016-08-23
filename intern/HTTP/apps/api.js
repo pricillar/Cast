@@ -1,4 +1,5 @@
 import geojson from "geojson"
+import _ from "underscore"
 
 export default (app) => {
 
@@ -23,7 +24,11 @@ export default (app) => {
             res.status(400).json({error: "Invalid API key"})
             return
         }
-        res.json(global.streams.getListeners(req.params.stream))
+        const listeners = []
+        for (let listener of global.streams.getListeners(req.params.stream)) {
+            listeners.push(_.omit(listener, "statsPromise"))
+        }
+        res.json(listeners)
     })
 
 
@@ -32,7 +37,13 @@ export default (app) => {
             res.status(400).json({error: "Invalid API key"})
             return
         }
-        res.json(global.streams.getUniqueListeners(req.params.stream))
+
+        const listeners = []
+        for (let listener of global.streams.getUniqueListeners(req.params.stream)) {
+            listeners.push(_.omit(listener, "statsPromise"))
+        }
+
+        res.json(listeners)
     })
 
     app.get("/api/:stream/:key/listenersmap", (req, res) => {
