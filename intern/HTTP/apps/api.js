@@ -24,10 +24,17 @@ export default (app) => {
             res.status(400).json({error: "Invalid API key"})
             return
         }
-        const listeners = []
-        for (let listener of global.streams.getListeners(req.params.stream)) {
-            listeners.push(_.omit(listener, "statsPromise"))
+
+        let listeners
+        if (req.params.stream === "*") {
+            listeners = []
+            for (let stream of global.streams.getActiveStreams()) {
+                listeners = listeners.concat(global.streams.getListeners(stream))
+            }
+        } else {
+            listeners = global.streams.getListeners(req.params.stream)
         }
+
         res.json(listeners)
     })
 
@@ -38,7 +45,16 @@ export default (app) => {
             return
         }
 
-        const listeners = []
+        let listeners
+        if (req.params.stream === "*") {
+            listeners = []
+            for (let stream of global.streams.getActiveStreams()) {
+                listeners = listeners.concat(global.streams.getListeners(stream))
+            }
+        } else {
+            listeners = global.streams.getListeners(req.params.stream)
+        }
+
         for (let listener of global.streams.getUniqueListeners(req.params.stream)) {
             listeners.push(_.omit(listener, "statsPromise"))
         }
@@ -54,15 +70,28 @@ export default (app) => {
             return res.status(500).json({error: "GeoServices is disabled"})
         }
 
-        var listeners = global.streams.getListeners(req.params.stream)
+        let listeners
 
-        var geoArray = []
-
-        for (var id in listeners) {
-            if (listeners[id].location) {
-                geoArray.push({name: listeners[id].client || listeners[id].ip, ip: listeners[id].ip, latitude: listeners[id].location.latitude, longitude: listeners[id].location.longitude})
+        if (req.params.stream === "*") {
+            listeners = []
+            for (let stream of global.streams.getActiveStreams()) {
+                listeners = listeners.concat(global.streams.getListeners(stream))
             }
+        } else {
+            listeners = global.streams.getListeners(req.params.stream)
         }
+
+        const geoArray = []
+
+        for (let listener of listeners) {
+            geoArray.push({
+                name: listener.client || listener.ip,
+                ip: listener.ip,
+                latitude: listener.location.latitude,
+                longitude: listener.location.longitude,
+            })
+        }
+
         res.setHeader("Content-Type", "application/json");
         res.send(geojson.parse(geoArray, {Point: ["latitude", "longitude"]}))
     })
