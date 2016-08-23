@@ -160,6 +160,7 @@ export default (app) => {
             headers["icy-metaint"] = 8192;
         }
 
+        var listenerID = global.streams.listenerTunedIn(req.params.stream, req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
         res.writeHead(200, headers);
 
         // setup icy
@@ -208,8 +209,6 @@ export default (app) => {
         stream.on("error", () => {
             // leave it unhandled for now
         })
-
-        var listenerID = global.streams.listenerTunedIn(req.params.stream, req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
 
         req.connection.on("close", () => {
             if (req) {
