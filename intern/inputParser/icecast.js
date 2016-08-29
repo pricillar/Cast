@@ -62,8 +62,7 @@ const listener = tcp.createServer((c) => {
             let request = input.split("\n")
             let indexOfAuth
             let continueNeeded = false
-
-            for (let id of request) {
+            for (let id in request) {
                 if (request.hasOwnProperty(id)) {
                     if (request[id].toLowerCase().indexOf("authorization") > -1) {
                         indexOfAuth = id
