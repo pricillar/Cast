@@ -15,7 +15,7 @@ const listener = tcp.createServer((c) => {
 
     c.on("data", (data) => {
         clearTimeout(connectionTimeout)
-        connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c)
+        connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
 
         if (!verifiedPasword) {
             verifiedPasword = true
@@ -95,7 +95,10 @@ const parseICY = (input) => {
     return out
 }
 
-const endConnection = (c) => {
+const endConnection = (c, stream) => {
+    if (stream) {
+        streams.removeStream(stream)
+    }
     c.end() // sends FIN
     c.destroy() // destroys socket as other side might be gone
 }
