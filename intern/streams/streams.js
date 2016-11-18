@@ -260,6 +260,7 @@ const listenerTunedOut = (streamName, id) => {
     if (typeof id === "number" && streamListeners[streamName]) {
         const listener = _.clone(_.where(streamListeners[streamName], {id: id})[0] || {})
         streamListeners[streamName] = _.without(streamListeners[streamName], _.where(streamListeners[streamName], {id: id})[0])
+        listener.id = id
         events.emit("listenerTunedOut", listener)
     }
 }
