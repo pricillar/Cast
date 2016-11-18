@@ -1,9 +1,9 @@
-import jade from "jade"
+import pug from "pug"
 import fs from "fs"
 import * as geolock from "../../geolock/geolock.js"
 import express from "express"
 
-const indexPage = jade.compile(fs.readFileSync(localdir + "/public/index.jade"));
+const indexPage = pug.compile(fs.readFileSync(localdir + "/public/index.jade"));
 
 export default (app) => {
     app.get("/", (req, res) => {
