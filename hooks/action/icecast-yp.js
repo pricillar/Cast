@@ -26,9 +26,9 @@ let addToDir = (stream) => {
     if (config.hostname.split(":").length === 3) { // if a non standard port is used
         hostname = config.hostname;
     } else if (config.httpPort === 0) { // if only serves over https
-        hostname = config.hostname + ":" + config.httpsPort.toString()
+        hostname = config.hostname + ":443"
     } else { // If both or only http, use http as some directories may have https issues
-        hostname = config.hostname.replace("https://", "http://") + ":" + config.httpPort.toString()
+        hostname = config.hostname.replace("https://", "http://") + ":80"
     }
 
     var sendRequestToDirectory = (directory) => {
