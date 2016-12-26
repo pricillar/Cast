@@ -10,25 +10,25 @@ const listener = tcp.createServer((c) => {
     let gotICY = true; // set true to not parse the info if the encoder refuses to wait on our response
     let icy = {}
     let startedPipe = true; // set true to not parse the info if the encoder refuses to wait on our response
+    let registeredStream = false;
     let stream;
-    let connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c)
+    let connectionTimeout;
 
     c.on("data", (data) => {
-        clearTimeout(connectionTimeout)
-        connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
-
         if (!verifiedPasword) {
             verifiedPasword = true
             let input = data.toString("utf-8").replace("\r\n", "\n").split("\n");
             if (!streams.streamPasswords.hasOwnProperty(input[0])) {
                 c.write("invalid password\n")
                 c.end()
+                c.destroy()
                 return
             }
             stream = streams.streamPasswords[input[0]]
             if (streams.isStreamInUse(stream)) {
                 c.write("Other source is connected\n")
                 c.end()
+                c.destroy()
                 return
             }
             c.write("OK2\r\nicy-caps:11\r\n\r\n");
@@ -49,7 +49,8 @@ const listener = tcp.createServer((c) => {
                 let input = data.toString("utf-8").replace("\r\n", "\n").split("\n")
                 icy = parseICY(input)
                 if (!icy["icy-name"]) {
-                    return c.end()
+                    c.end()
+                    return c.destroy()
                 }
             }
             gotICY = true
@@ -68,6 +69,11 @@ const listener = tcp.createServer((c) => {
                 directoryListed: icy["icy-pub"] === 1,
             })
             startedPipe = true
+            registeredStream = true
+        }
+        if (registeredStream) {
+            clearTimeout(connectionTimeout)
+            connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
         }
 
     })
@@ -96,9 +102,11 @@ const parseICY = (input) => {
 }
 
 const endConnection = (c, stream) => {
+    c.end() // sends FIN
     if (stream) {
         streams.removeStream(stream)
     }
-    c.end() // sends FIN
-    c.destroy() // destroys socket as other side might be gone
+    setTimeout((connection) => {
+        connection.destroy()// destroys socket as other side might be gone
+    }, 5000, c)
 }
