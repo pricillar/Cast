@@ -37,11 +37,11 @@ const listener = tcp.createServer((c) => {
             c.write("OK2\r\nicy-caps:11\r\n\r\n");
             if (input.length > 1) {
                 icy = parseICY(data.toString("utf-8").replace("\r\n", "\n").split("\n"))
-                if (!icy["icy-name"]) {
-                    c.end()
-                    return c.destroy()
+                if (icy["icy-name"]) {
+                    gotICY = true
+                } else {
+                    gotICY = false
                 }
-                gotICY = true
             } else {
                 gotICY = false
             }
