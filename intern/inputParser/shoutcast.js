@@ -9,35 +9,39 @@ const listener = tcp.createServer((c) => {
     let verifiedPasword = false;
     let gotICY = true; // set true to not parse the info if the encoder refuses to wait on our response
     let icy = {}
-    let startedPipe = true; // set true to not parse the info if the encoder refuses to wait on our response
+    let startedPipe = false;
     let registeredStream = false;
     let stream;
     let connectionTimeout;
 
     c.on("data", (data) => {
+        clearTimeout(connectionTimeout)
+        if (registeredStream) {
+            connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
+        }
+
         if (!verifiedPasword) {
             verifiedPasword = true
             let input = data.toString("utf-8").replace("\r\n", "\n").split("\n");
             if (!streams.streamPasswords.hasOwnProperty(input[0])) {
                 c.write("invalid password\n")
                 c.end()
-                c.destroy()
-                return
+                return c.destroy()
             }
             stream = streams.streamPasswords[input[0]]
             if (streams.isStreamInUse(stream)) {
                 c.write("Other source is connected\n")
                 c.end()
-                c.destroy()
-                return
+                return c.destroy()
             }
             c.write("OK2\r\nicy-caps:11\r\n\r\n");
-
             if (input.length > 1) {
-                icy = parseICY(input)
-                if (typeof icy["icy-name"] === "undefined") {
-                    gotICY = false
+                icy = parseICY(data.toString("utf-8").replace("\r\n", "\n").split("\n"))
+                if (!icy["icy-name"]) {
+                    c.end()
+                    return c.destroy()
                 }
+                gotICY = true
             } else {
                 gotICY = false
             }
@@ -54,7 +58,7 @@ const listener = tcp.createServer((c) => {
                 }
             }
             gotICY = true
-        } else if (!startedPipe) {
+        } else if (!startedPipe && gotICY) {
             if (!icy["content-type"] || icy["content-type"].split("/").length <= 1) {
                 // if your encoder is this shitty (Nicecast) it probably uses mpeg
                 icy["content-type"] = "audio/mpeg"
@@ -71,18 +75,15 @@ const listener = tcp.createServer((c) => {
             startedPipe = true
             registeredStream = true
         }
-        if (registeredStream) {
-            clearTimeout(connectionTimeout)
-            connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
-        }
-
     })
 
     c.on("end", () => {
+        clearTimeout(connectionTimeout)
         streams.removeStream(stream)
     })
 
     c.on("error", () => {
+        clearTimeout(connectionTimeout)
         streams.removeStream(stream)
     })
 
@@ -102,11 +103,13 @@ const parseICY = (input) => {
 }
 
 const endConnection = (c, stream) => {
+    console.log("TIME OUT")
     c.end() // sends FIN
     if (stream) {
         streams.removeStream(stream)
     }
     setTimeout((connection) => {
-        connection.destroy()// destroys socket as other side might be gone
+        console.log("destroys connection after end")
+        connection.destroy() // destroys socket as other side might be gone
     }, 5000, c)
 }
