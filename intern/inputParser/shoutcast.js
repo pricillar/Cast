@@ -17,7 +17,7 @@ const listener = tcp.createServer((c) => {
     c.on("data", (data) => {
         clearTimeout(connectionTimeout)
         if (registeredStream) {
-            connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
+            //connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
         }
 
         if (!verifiedPasword) {
