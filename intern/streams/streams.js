@@ -161,6 +161,9 @@ const getStreamConf = (streamName) => {
 }
 
 const removeStream = (streamName) => {
+    if (!streamName) {
+        return;
+    }
     streams = _.omit(streams, streamName)
     streamConf = _.omit(streamConf, streamName)
     streamMetadata = _.omit(streamMetadata, streamName)
