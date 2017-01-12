@@ -3,22 +3,15 @@ if (!global.streams) {
     global.streams = require("../streams/streams.js")
 }
 
-const ONE_SECOND = 1000
-
 const listener = tcp.createServer((c) => {
     let verifiedPasword = false;
     let gotICY = true; // set true to not parse the info if the encoder refuses to wait on our response
     let icy = {}
     let startedPipe = false;
-    let registeredStream = false;
     let stream;
-    let connectionTimeout;
 
     c.on("data", (data) => {
-        clearTimeout(connectionTimeout)
-        if (registeredStream) {
-            //connectionTimeout = setTimeout(endConnection, 10 * ONE_SECOND, c, stream)
-        }
+
 
         if (!verifiedPasword) {
             verifiedPasword = true
@@ -73,17 +66,15 @@ const listener = tcp.createServer((c) => {
                 directoryListed: icy["icy-pub"] === 1,
             })
             startedPipe = true
-            registeredStream = true
         }
     })
 
     c.on("end", () => {
-        clearTimeout(connectionTimeout)
         streams.removeStream(stream)
     })
 
     c.on("error", () => {
-        clearTimeout(connectionTimeout)
+        c.end()
         streams.removeStream(stream)
     })
 
