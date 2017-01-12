@@ -93,14 +93,3 @@ const parseICY = (input) => {
     return out
 }
 
-const endConnection = (c, stream) => {
-    console.log("TIME OUT")
-    c.end() // sends FIN
-    if (stream) {
-        streams.removeStream(stream)
-    }
-    setTimeout((connection) => {
-        console.log("destroys connection after end")
-        connection.destroy() // destroys socket as other side might be gone
-    }, 5000, c)
-}
