@@ -4,6 +4,7 @@ if (!global.streams) {
 }
 
 const listener = tcp.createServer((c) => {
+    c.setTimeout(30000)
     let verifiedPasword = false;
     let gotICY = true; // set true to not parse the info if the encoder refuses to wait on our response
     let icy = {}
@@ -11,8 +12,6 @@ const listener = tcp.createServer((c) => {
     let stream;
 
     c.on("data", (data) => {
-
-
         if (!verifiedPasword) {
             verifiedPasword = true
             let input = data.toString("utf-8").replace("\r\n", "\n").split("\n");
@@ -74,6 +73,11 @@ const listener = tcp.createServer((c) => {
     })
 
     c.on("error", () => {
+        c.end()
+        streams.removeStream(stream)
+    })
+
+    c.on("timeout", () => {
         c.end()
         streams.removeStream(stream)
     })
