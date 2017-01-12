@@ -31,7 +31,11 @@ let addToDir = (stream) => {
         hostname = config.hostname.replace("https://", "http://") + ":80"
     }
 
-    var sendRequestToDirectory = (directory) => {
+    var sendRequestToDirectory = (directory, retry = 0) => {
+        retry++
+        if (retry > 5) {
+            return;
+        }
         sendRequest(directory, {
             action: "add",
             sn: info.name,
@@ -41,26 +45,26 @@ let addToDir = (stream) => {
             listenurl: hostname + "/streams/" + stream + "?yp=" + Math.floor(Math.random() * 10),
             url: info.url,
         }, function (err, res) {
-            if (err) {
+            if (err || res.ypresponse !== "1") {
+                return setTimeout(sendRequestToDirectory, 20000, directory, retry)
+            }
+
+            if (typeof dirInfo[stream] === "undefined") {
+                dirInfo[stream] = {};
+            }
+            var touchfreq = parseInt(res.touchfreq, 10);
+            if (isNaN(touchfreq)) {
                 return;
             }
-            if (res.ypresponse === "1") {
-                if (typeof dirInfo[stream] === "undefined") {
-                    dirInfo[stream] = {};
-                }
-                var touchfreq = parseInt(res.touchfreq, 10);
-                if (isNaN(touchfreq)) {
-                    return;
-                }
-                dirInfo[stream][directory] = {
-                    sid: res.sid,
-                    TouchFreq: touchfreq,
-                };
+            dirInfo[stream][directory] = {
+                sid: res.sid,
+                TouchFreq: touchfreq,
+            };
+            touchDir(stream, directory);
+            setInterval(function () {
                 touchDir(stream, directory);
-                setInterval(function () {
-                    touchDir(stream, directory);
-                }, touchfreq * 1000);
-            }
+            }, touchfreq * 1000);
+
         });
     };
 
@@ -103,7 +107,7 @@ var removeFromDir = (stream) => {
             sendRequest(dir, {
                 action: "remove",
                 sid: dirInfo[stream][dir].sid,
-            }, function () {});
+            }, function () { });
         }
     }
 };
