@@ -150,7 +150,7 @@ export default (app) => {
             "Expires": "Sun, 9 Feb 2014 15:32:00 GMT",
         }
 
-        if (req.headers["user-agent"].indexOf("RealMedia") > -1) {
+        if (req.headers["user-agent"] && req.headers["user-agent"].indexOf("RealMedia") > -1) {
             // RealMedia players can't read the ICY metadata properly
             req.headers["icy-metadata"] = 0
         }
