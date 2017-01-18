@@ -68,6 +68,9 @@ const streamExists = function (streamname) {
     }
 */
 const addStream = function (inputStream, conf) {
+    if (!conf.stream) {
+        throw new Error("Stream is null")
+    }
     conf.name = conf.name || "Not available";
     streamPreBuffer[conf.stream] = []
 
