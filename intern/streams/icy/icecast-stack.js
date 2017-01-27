@@ -272,7 +272,9 @@ function parseMetadata(metadata) {
     var piece = pieces[i];
     if (piece.length) {
       piece = piece.split("='");
-      rtn[piece[0]] = piece[1].substring(0, piece[1].length-1);
+      if (piece.length >= 2) {
+        rtn[piece[0]] = piece[1].substring(0, piece[1].length-1);
+      }
     }
   }
   return rtn;
