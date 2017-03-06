@@ -55,6 +55,9 @@ const listener = tcp.createServer((c) => {
                 // if your encoder is this shitty (Nicecast) it probably uses mpeg
                 icy["content-type"] = "audio/mpeg"
             }
+            if (stream === null) {
+                return c.end()
+            }
             streams.addStream(c, {
                 name: icy["icy-name"],
                 stream: stream,
