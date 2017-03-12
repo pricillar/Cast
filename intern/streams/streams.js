@@ -246,7 +246,7 @@ const listenerTunedIn = (streamName, ip, client, starttime, hls) => {
     }
     if (config.geoservices && config.geoservices.enabled) {
         var ipInfo = global.maxmind.get(ip)
-        if (ipInfo !== null) {
+        if (ipInfo !== null && ipInfo.country) {
             info.country = ipInfo.country.names.en
             info.countryCode = ipInfo.country.iso_code
             info.location = {
