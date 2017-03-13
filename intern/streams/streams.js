@@ -75,7 +75,7 @@ const addStream = function (inputStream, conf) {
     streamPreBuffer[conf.stream] = []
 
     var throttleStream = new stream.PassThrough();
-    throttleStream.setMaxListeners(10000); // set soft max to prevent leaks
+    throttleStream.setMaxListeners(1000000); // set soft max to prevent leaks
     streams[conf.stream] = throttleStream
     streamConf[conf.stream] = conf
     inputStreams[conf.stream] = inputStream
