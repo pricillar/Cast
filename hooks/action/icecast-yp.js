@@ -5,7 +5,7 @@ let dirInfo = {}; // { stream: { dirurl: info } }
 let sendRequest = (host, data, callback) => {
     rest.post(host, {
         headers: {
-            "User-Agent": "Icecast 2.4.1", // Lie about your identity to let you in
+            "User-Agent": "Icecast 2.4.3", // Lie about your identity to let you in
         },
         timeout: 10000,
         data: data,
