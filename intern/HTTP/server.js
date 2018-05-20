@@ -7,11 +7,11 @@ if (config.httpsPort !== 0) {
     let https = require("http2").createServer({
         key: fs.readFileSync(config.httpsKey),
         cert: fs.readFileSync(config.httpsCert),
-    }, app).listen(global.config.httpsPort)
+    }, app).listen(global.config.httpsPort, () => console.log(`Listening on ${config.httpsPort}`))
     global.io.attach(https)
 }
 if (config.httpPort !== 0) {
-    let http = require("http").createServer(app).listen(config.httpPort);
+    let http = require("http").createServer(app).listen(config.httpPort, () => console.log(`Listening on ${config.httpPort}`));
     global.io.attach(http)
 }
 
