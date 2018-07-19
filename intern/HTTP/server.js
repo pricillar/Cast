@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 })
 
 app.use((req, res, next) => {
-    if (req.ip && req.ip.match.match("^::ffff:")) {
+    if (req.ip && req.ip.match("^::ffff:")) {
         req.ip = req.ip.replace("::ffff:", "")
     }
     next();
