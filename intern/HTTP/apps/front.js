@@ -48,7 +48,7 @@ export default (app) => {
                 meta,
                 streams: streams.getActiveStreams(),
                 currentStream: req.params.stream,
-                listencount: config.hideListenerCount ? null : streams.numberOfListerners(req.params[0]),
+                listencount: config.hideListenerCount ? null : streams.numberOfListerners(req.params.stream),
                 hostname: config.hostname,
                 geolockIsAllowed,
             }))
