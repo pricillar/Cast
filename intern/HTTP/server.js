@@ -29,8 +29,9 @@ app.use((req, res, next) => {
 })
 
 app.use((req, res, next) => {
+    req.processedIP = req.ip
     if (req.ip && req.ip.match("^::ffff:")) {
-        req.ip = req.ip.replace("::ffff:", "")
+        req.processedIP = req.processedIP.replace("::ffff:", "")
     }
     next();
 });

@@ -11,7 +11,7 @@ export default (app) => {
     }
 
     app.head("/streams/:stream", (req, res) => {
-        if (!geolock.isAllowed(req.ip)) {
+        if (!geolock.isAllowed(req.processedIP)) {
             return res.status(401).send()
         }
         if (!req.params.stream) {
@@ -62,14 +62,14 @@ export default (app) => {
     })
 
     app.get("/hls/:stream/:segment", (req, res) => {
-        if (!geolock.isAllowed(req.ip)) {
+        if (!geolock.isAllowed(req.processedIP)) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
         if (!global.streams.streamExists(req.params.stream)) {
             res.status(404).send("Stream not found")
             return
         }
-        if (!req.query.id || !global.streams.listenerIdExists(req.params.stream, req.query.id, req.ip, req.headers["user-agent"])) {
+        if (!req.query.id || !global.streams.listenerIdExists(req.params.stream, req.query.id, req.processedIP, req.headers["user-agent"])) {
             return res.status(401).send("Invalid id")
         }
 
@@ -100,7 +100,7 @@ export default (app) => {
 
     app.get("/streams/:stream", (req, res) => {
 
-        if (!geolock.isAllowed(req.ip)) {
+        if (!geolock.isAllowed(req.processedIP)) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
 
@@ -160,7 +160,7 @@ export default (app) => {
             headers["icy-metaint"] = 8192;
         }
 
-        var listenerID = global.streams.listenerTunedIn(req.params.stream, req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
+        var listenerID = global.streams.listenerTunedIn(req.params.stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
         res.writeHead(200, headers);
 
         // setup icy
@@ -258,8 +258,8 @@ export default (app) => {
             return res.status(404).send("Stream not found")
         }
 
-        if (!req.query.id || !global.streams.listenerIdExists(stream, req.query.id, req.ip, req.headers["user-agent"])) {
-            var listenerID = global.streams.listenerTunedIn(stream, req.ip, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
+        if (!req.query.id || !global.streams.listenerIdExists(stream, req.query.id, req.processedIP, req.headers["user-agent"])) {
+            var listenerID = global.streams.listenerTunedIn(stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
             if (!global.streams.hlsLastHit[req.params.stream]) {
                 global.streams.hlsLastHit[stream] = {}
             }
