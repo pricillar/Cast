@@ -9,7 +9,7 @@ exports.__defineGetter__('META_BLOCK_SIZE', function() { return META_BLOCK_SIZE;
 
 // Usually, there will be no metadata event to inject (on the WriteStack), so
 // a single byte 0 is sent indicating 0 bytes of metadata.
-const NO_METADATA_BYTE = Buffer.from(1);
+const NO_METADATA_BYTE = Buffer.alloc(1);
 NO_METADATA_BYTE[0] = 0;
 
 /**
