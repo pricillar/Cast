@@ -170,7 +170,7 @@ const removeStream = (streamName) => {
     streams = _.omit(streams, streamName)
     streamConf = _.omit(streamConf, streamName)
     streamMetadata = _.omit(streamMetadata, streamName)
-    streamListeners = _.omit(streamListeners, streamName)
+    //streamListeners = _.omit(streamListeners, streamName)
     events.emit("removeStream", streamName)
 }
 
