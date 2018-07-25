@@ -42,7 +42,7 @@ exports.IcecastReadStack = IcecastReadStack;
 inherits(IcecastReadStack, StreamStack);
 
 exports.appendBuffer = function(a, b) {
-  var temp = Buffer.from(a.length + b.length);
+  var temp = Buffer.alloc(a.length + b.length);
   a.copy(temp, 0, 0);
   b.copy(temp, a.length, 0);
   return temp;
@@ -177,7 +177,7 @@ IcecastWriteStack.prototype.queueMetadata = function(metadata) {
   var metaLength = Math.min(255, Math.ceil(metadata.length/META_BLOCK_SIZE));
   // Create a new Buffer that will contain the inital metalength byte, then
   // the metadata itself, and then will pad the rest of the Buffer with null bytes.
-  var metaBuf = Buffer.from((metaLength * META_BLOCK_SIZE)+1);
+  var metaBuf = Buffer.alloc((metaLength * META_BLOCK_SIZE)+1);
   metaBuf[0] = metaLength;
   var end = metaBuf.write(metadata, 1) + 1;
   if (end < metaBuf.length) {
