@@ -1,6 +1,7 @@
 import stream from "stream"
 import _ from "underscore"
 import HLSHandler from "./hls"
+import DASHHandler from "./dash"
 
 if (config.geoservices && config.geoservices.enabled && !global.maxmind) {
     global.maxmind = require("maxmind").open(global.config.geoservices.maxmindDatabase)
@@ -24,9 +25,10 @@ let rateLimitingIsEnabled = false
 let primaryStream = ""
 let latestListenerID = {} // {stream:id}
 
-if (global.config.hls) {
+if (global.config.hls || global.config.dash) {
     var hlsLastHit = {} // {stream:{id:unixtime}}
     var hlsHanders = {} // {stream:[handler]}
+    var dashHanders = {} // {stream:[handler]}
 
     // handle HLS hits
     setInterval(() => {
@@ -103,6 +105,11 @@ const addStream = function (inputStream, conf) {
         hlsHanders[conf.stream].start()
     }
 
+    if (global.config.dash) {
+        dashHanders[conf.stream] = new DASHHandler(inputStreams[conf.stream], conf.name)
+        dashHanders[conf.stream].start()
+    }
+
 
     throttleStream.on("data", (chunk) => {
         const newPreBuffer = []
@@ -143,8 +150,12 @@ const removeStream = (streamName) => {
     streams = _.omit(streams, streamName)
     streamConf = _.omit(streamConf, streamName)
     streamMetadata = _.omit(streamMetadata, streamName)
-    if (global.config.hls && hlsHanders[conf.stream]) {
-        hlsHanders[conf.stream].stop()
+  
+    if (global.config.hls && hlsHanders[streamName]) {
+        hlsHanders[streamName].stop()
+    }
+    if (global.config.dash && dashHanders[streamName]) {
+        dashHanders[streamName].stop()
     }
     //streamListeners = _.omit(streamListeners, streamName)
     events.emit("removeStream", streamName)
@@ -344,3 +355,4 @@ module.exports.streamID = streamID
 module.exports.endStream = endStream
 module.exports.hlsHanders = hlsHanders
 module.exports.hlsLastHit = hlsLastHit
+module.exports.dashHanders = dashHanders
