@@ -39,7 +39,7 @@ export default class HLSHandler {
             `${this.tempPath}/hls.m3u8`
         ],
         { 
-            stdio: ['pipe', null, null]
+            stdio: ['pipe', null, process.stderr]
         });
 
         this.process.stdin.on('error', (...args) => { console.log('stdin err hls', args); });
