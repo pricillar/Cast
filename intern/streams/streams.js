@@ -82,6 +82,14 @@ const addStream = function (inputStream, conf) {
     streamConf[conf.stream] = conf
     inputStreams[conf.stream] = inputStream
 
+    throttleStream.on("error", (err) => {
+        console.log("throttle stream error", err)
+    })
+
+    inputStream.on("error", (err) => {
+        console.log("input stream error", err)
+    })
+
     if (config.rateLimiting) {
         rateLimitingIsEnabled = true
 
