@@ -41,6 +41,8 @@ export default class HLSHandler {
         { 
             stdio: ['pipe', null, null]
         });
+
+        this.process.stdin.on('error', (...args) => { console.log('stdin err hls', args); });
     
         this.inputStream.pipe(this.process.stdin);
     }
