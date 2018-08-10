@@ -326,7 +326,7 @@ const getPastMedatada = (streamName) => {
 
 const endStream = (streamName) => {
     if (isStreamInUse(streamName)) {
-        inputStreams[stream].destroy();
+        inputStreams[stream].end();
     }
 }
 

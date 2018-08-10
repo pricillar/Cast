@@ -18,13 +18,13 @@ const listener = tcp.createServer((c) => {
             if (!streams.streamPasswords.hasOwnProperty(input[0])) {
                 c.write("invalid password\n")
                 c.end()
-                return c.destroy()
+                return c.end()
             }
             stream = streams.streamPasswords[input[0]]
             if (streams.isStreamInUse(stream)) {
                 c.write("Other source is connected\n")
                 c.end()
-                return c.destroy()
+                return c.end()
             }
             c.write("OK2\r\nicy-caps:11\r\n\r\n");
             if (input.length > 1) {
@@ -46,7 +46,7 @@ const listener = tcp.createServer((c) => {
                 icy = parseICY(input)
                 if (!icy["icy-name"]) {
                     c.end()
-                    return c.destroy()
+                    return c.end()
                 }
             }
             gotICY = true
