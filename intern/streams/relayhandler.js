@@ -84,7 +84,7 @@ export const relayStream = (desinationStream, relayUrl) => {
         const checkInterval = setInterval(() => { // check every 10 seconds to see if we got new data
             if (!gotData) {
                 console.log("Got no data from relaying server in 10 seconds")
-                inputStream.end()
+                res.end()
                 clearInterval(checkInterval)
             }
             gotData = false
