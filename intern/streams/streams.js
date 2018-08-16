@@ -6,7 +6,7 @@ import AudioHandler from "./audio"
 import OGGHandler from "./ogg"
 
 if (config.geoservices && config.geoservices.enabled && !global.maxmind) {
-    global.maxmind = require("maxmind").open(global.config.geoservices.maxmindDatabase,() => console.log("Maxmind loaded"))
+    global.maxmind = require("maxmind").openSync(global.config.geoservices.maxmindDatabase)
     if (!maxmind) {
         console.log("Error loading Maxmind Database")
     }
