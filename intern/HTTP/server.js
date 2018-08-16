@@ -7,7 +7,7 @@ const wrap = fn => (...args) => fn(...args).catch(args[2]);
 global.io = require("socket.io")()
 
 if (config.httpsPort !== 0) {
-    let https = require("http2").createServer({
+    let https = require("https").createServer({
         key: fs.readFileSync(config.httpsKey),
         cert: fs.readFileSync(config.httpsCert),
     }, app).listen(global.config.httpsPort, () => console.log(`Listening on ${config.httpsPort}`))
