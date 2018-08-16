@@ -45,3 +45,7 @@ if (global.config.startUpScript) { // run a script before going on eg. to load t
 } else {
     loadCast();
 }
+
+process.on("SIGTERM", () => {
+      process.exit(0);
+});
