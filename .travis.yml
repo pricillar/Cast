@@ -41,7 +41,7 @@ cache:
   - /tmp/nodec/
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:deadsnakes/ppa; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:deadsnakes/ppa --yes; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
