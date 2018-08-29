@@ -2,7 +2,10 @@ import stream from "stream"
 import EventEmitter from "events"
 import _ from "underscore"
 
-// Handler of input streams to accept multiple
+/*
+    StreamLayers is responsible for handling multiple input streams.
+    It generates an output stream which piped the last added stream
+*/
 export default class StreamLayers {
 
     streams = []
