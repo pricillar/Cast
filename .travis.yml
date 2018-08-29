@@ -11,7 +11,7 @@ env:
       - TYPE=docker ARCH=amd64 ARCHREPO=amd64   QEMU_ARCH=x86_64
       - TYPE=docker ARCH=armhf ARCHREPO=arm32v7 QEMU_ARCH=arm    
       - TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
-      - TYPE=binary ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
+      - TYPE=binary
 addons:
   artifacts: true
   apt:
