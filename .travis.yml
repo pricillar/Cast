@@ -64,8 +64,8 @@ script:
 
  
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y squashfs-tools; fi
-- if [ "$TYPE" == "binary" ]; then sudo pip install awscli --upgrade; fi 
-- if [ "$TYPE" == "binary" ]; then sudo pip install 'requests[security]'; fi 
+- if [ "$TYPE" == "binary" ]; then pip install  --user  awscli --upgrade; fi 
+- if [ "$TYPE" == "binary" ]; then pip install  --user  'requests[security]'; fi 
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget http://enclose.io/nodec/nodec-linux-x64.gz; fi
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then gzip -d nodec-linux-x64.gz; fi
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv nodec-linux-x64 nodec && chmod +x nodec; fi
