@@ -79,7 +79,7 @@ const addStream = function (inputStream, conf) {
     conf.name = conf.name || "Not available";
 
     if (!streamLayers[conf.stream]) {
-        streamLayers[conf.stream] = new StreamLayers()
+        streamLayers[conf.stream] = new StreamLayers(conf.stream)
         // we will still keep these here as well as in the handlers
     }
 
@@ -130,6 +130,9 @@ const removeStream = (streamName) => {
     if (!streamName) {
         return;
     }
+
+    streamLayers[streamName].endAll()
+
     streams = _.omit(streams, streamName)
     streamConf = _.omit(streamConf, streamName)
     streamMetadata = _.omit(streamMetadata, streamName)

@@ -8,6 +8,8 @@ import _ from "underscore"
 */
 export default class StreamLayers {
 
+    name = ""
+
     streams = []
     outStream
 
@@ -15,7 +17,8 @@ export default class StreamLayers {
 
     events
 
-    constructor() {
+    constructor(name) {
+        this.name = name
         this.events = new EventEmitter()
     }
 
@@ -58,6 +61,13 @@ export default class StreamLayers {
 
     getStream() {
         return this.outStream
+    }
+
+    endAll() {
+        this.outStreamIsRunning = false
+        for (let stream of this.streams) {
+            stream.destroy()
+        }
     }
 
 }
