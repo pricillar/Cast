@@ -31,6 +31,11 @@ export default (app, wrap) => {
                 res.setHeader("Content-Type", "audio/x-mpegurl")
                 return res.send()
             }
+            if (req.params.stream.split(".")[1] === "mp3") {
+                req.params.stream = req.params.stream.split(".")[0]
+            } else if (req.params.stream.split(".")[1] === "ogg") {
+                req.params.stream = req.params.stream.split(".")[0]
+            }
         }
 
         if (!global.streams.streamExists(req.params.stream)) {
@@ -169,6 +174,12 @@ export default (app, wrap) => {
             if (req.params.stream.split(".")[1] === "mpd" && global.config.dash) {
                 serveMPD(req, res)
                 return
+            }
+
+            if (req.params.stream.split(".")[1] === "mp3") {
+                req.params.stream = req.params.stream.split(".")[0]
+            } else if (req.params.stream.split(".")[1] === "ogg") {
+                req.params.stream = req.params.stream.split(".")[0]
             }
         }
 
