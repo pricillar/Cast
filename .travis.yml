@@ -8,10 +8,12 @@ env:
       - QEMU_VER=v2.9.1
       - DOCKER_REPO=innovate/cast
     matrix:
-      - ARCH=amd64 ARCHREPO=amd64   QEMU_ARCH=x86_64
-      - ARCH=armhf ARCHREPO=arm32v7 QEMU_ARCH=arm    
-      - ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
+      - TYPE=docker ARCH=amd64 ARCHREPO=amd64   QEMU_ARCH=x86_64
+      - TYPE=docker ARCH=armhf ARCHREPO=arm32v7 QEMU_ARCH=arm    
+      - TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
+      - TYPE=binary ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
 addons:
+  artifacts: true
   apt:
     sources:
     - ubuntu-toolchain-r-test
@@ -33,13 +35,24 @@ script:
 - babel ./ -d /tmp/testbuild --minified --ignore 'node_modules/'
 - git reset --hard
 - rm -fr node_modules/
-- wget -N https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_VER/x86_64_qemu-${QEMU_ARCH}-static.tar.gz
-- tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz
-- docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./
+- if [ "$TYPE" == "docker" ]; then wget -N https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_VER/x86_64_qemu-${QEMU_ARCH}-static.tar.gz ; fi
+- if [ "$TYPE" == "docker" ]; then tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz; fi
+- if [ "$TYPE" == "docker" ]; then docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./; fi
+
+ 
+- if [ "$TYPE" == "binary" ]; then sudo apt-get install -y squashfs-tools s3cmd; fi
+- if [ "$TYPE" == "binary" ]; then sudo pip install awscli --upgrade; fi 
+- if [ "$TYPE" == "binary" ]; then wget http://enclose.io/nodec/nodec-linux-x64.gz; fi
+- if [ "$TYPE" == "binary" ]; then gzip -d nodec-linux-x64.gz; fi
+- if [ "$TYPE" == "binary" ]; then chmod +x nodec-linux-x64; fi
+- if [ "$TYPE" == "binary" ]; then ./nodec-linux-x64 server.js; fi
+- if [ "$TYPE" == "binary" ]; then mv a.out cast-$TRAVIS_COMMIT; fi
+
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin 
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker push $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker push $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
+  - if [ "$TYPE" == "binary" ]; then aws s3 --endpoint-url=https://s3.wasabisys.com cp ./cast-$TRAVIS_COMMIT s3://cast/; fi
