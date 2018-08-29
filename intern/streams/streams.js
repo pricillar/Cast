@@ -4,6 +4,7 @@ import HLSHandler from "./hls"
 import DASHHandler from "./dash"
 import AudioHandler from "./audio"
 import OGGHandler from "./ogg"
+import StreamLayers from "./layers"
 
 if (config.geoservices && config.geoservices.enabled && !global.maxmind) {
     global.maxmind = require("maxmind").openSync(global.config.geoservices.maxmindDatabase)
@@ -24,6 +25,7 @@ let primaryStream = ""
 let latestListenerID = {} // {stream:id}
 
 let audioHandlers = {} // {stream:Handler}
+let streamLayers = {} // {stream:Handler}
 
 if (global.config.hls || global.config.dash) {
     var hlsLastHit = {} // {stream:{id:unixtime}}
@@ -70,37 +72,50 @@ const streamExists = function (streamname) {
     }
 */
 const addStream = function (inputStream, conf) {
+    let first = false
     if (!conf.stream) {
         throw new Error("Stream is null")
     }
     conf.name = conf.name || "Not available";
 
+    if (!streamLayers[conf.stream]) {
+        streamLayers[conf.stream] = new StreamLayers()
+        // we will still keep these here as well as in the handlers
+    }
+
+    if (!streamLayers[conf.stream].outStreamIsRunning) { // first source
+        streamConf[conf.stream] = conf
+        first = true
+    }
+
+    streamLayers[conf.stream].input(inputStream)
+    inputStreams[conf.stream] = streamLayers[conf.stream].getStream()
+    
     let handler
-    if (conf.type == "application/ogg" || conf.type == "audio/ogg") {
+    if (audioHandlers[conf.stream]) {
+        handler = audioHandlers[conf.stream]
+    } else if (conf.type == "application/ogg" || conf.type == "audio/ogg") {
         handler = new OGGHandler()
     } else {
         handler = new AudioHandler()
     }
     audioHandlers[conf.stream] = handler
 
-    // we will still keep these here as well as in the handlers
-    streamConf[conf.stream] = conf
-    inputStreams[conf.stream] = inputStream
+    handler.input(streamLayers[conf.stream].getStream())
 
-    handler.input(inputStream)
-
-    if (global.config.hls && conf.type !== "application/ogg") { // OGG is not supported in HLS
+    if (global.config.hls && conf.type !== "application/ogg" && first) { // OGG is not supported in HLS
         hlsHanders[conf.stream] = new HLSHandler(inputStreams[conf.stream], conf.name)
         hlsHanders[conf.stream].start()
     }
 
-    if (global.config.dash && conf.type !== "application/ogg") { // OGG is not supported in DASH
+    if (global.config.dash && conf.type !== "application/ogg" && first) { // OGG is not supported in DASH
         dashHanders[conf.stream] = new DASHHandler(inputStreams[conf.stream], conf.name)
         dashHanders[conf.stream].start()
     }
 
-    events.emit("addStream", conf.stream)
-
+    if (first) {
+        events.emit("addStream", conf.stream)
+    }
 }
 
 const getStream = (streamName) => {
