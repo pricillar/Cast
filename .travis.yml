@@ -19,6 +19,9 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+cache:
+  directories:
+  - /tmp/nodec/
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
