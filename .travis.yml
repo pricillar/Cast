@@ -40,7 +40,7 @@ script:
 - if [ "$TYPE" == "docker" ]; then docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./; fi
 
  
-- if [ "$TYPE" == "binary" ]; then sudo apt-get install -y squashfs-tools s3cmd; fi
+- if [ "$TYPE" == "binary" ]; then sudo apt-get install -y squashfs-tools; fi
 - if [ "$TYPE" == "binary" ]; then sudo pip install awscli --upgrade; fi 
 - if [ "$TYPE" == "binary" ]; then wget http://enclose.io/nodec/nodec-linux-x64.gz; fi
 - if [ "$TYPE" == "binary" ]; then gzip -d nodec-linux-x64.gz; fi
@@ -55,4 +55,4 @@ after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
-  - if [ "$TYPE" == "binary" ]; then aws s3 --endpoint-url=https://s3.wasabisys.com cp ./cast-$TRAVIS_COMMIT s3://cast/; fi
+  - if [ "$TYPE" == "binary" ]; then aws s3 --endpoint-url=$S3_ENDPOINT cp ./cast-$TRAVIS_COMMIT s3://cast/; fi
