@@ -4,7 +4,7 @@ import auth from "http-auth"
 var basic = auth.basic({
     realm: "Cast's SHOUTcast v2 compatible backend",
 }, (username, password, callback) => { // Custom authentication method.
-    callback(username === "admin" && password === config.apikey);
+    callback(password === config.apikey);
 });
 
 export default function (app) {
