@@ -7,6 +7,16 @@ var basic = auth.basic({
     callback(password === config.apikey);
 });
 
+const shoutcastv1Auth = (fn) => {
+    return (req, res, next) => {
+        if (req.query.pass === config.apikey) {
+            return next()
+        }
+
+        return fn(req, res, next)
+    }
+}
+
 export default function (app) {
 
     app.get("/currentsong", (req, res) => {
@@ -137,7 +147,7 @@ export default function (app) {
         streamAdminSongHistory(req, res)
     })
 
-    app.get("/admin.cgi", auth.connect(basic), (req, res) => {
+    app.get("/admin.cgi", shoutcastv1Auth(auth.connect(basic)), (req, res) => {
         if (!req.query.page || !req.query.mode) {
             return res.status(400).send("This is only for API calls.")
         }
