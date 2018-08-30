@@ -143,17 +143,26 @@ export default function (app) {
         }
         switch (req.query.page) {
             case "1":
-                streamAdminStats(req, res)
+                return streamAdminStats(req, res)
                 break;
             case "3":
-                streamAdminListeners(req, res)
+                return streamAdminListeners(req, res)
                 break;
             case "4":
-                streamAdminSongHistory(req, res)
+                return streamAdminSongHistory(req, res)
                 break;
-            default:
-                res.status(400).send("Not supported")
         }
+
+        switch (req.query.mode) {
+            case "kicksrc": 
+                const stream = sidToStream(req.query.sid)
+                global.streams.endStream(stream)
+                return res.status(200).send("OK")
+                // implement me
+                break;
+        }
+
+        return res.status(400).send("Not supported")
     })
 
     app.get("/stream/:sid", (req, res) => {
