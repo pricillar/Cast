@@ -91,17 +91,19 @@ const addStream = function (inputStream, conf) {
     streamLayers[conf.stream].input(inputStream)
     inputStreams[conf.stream] = streamLayers[conf.stream].getStream()
     
-    let handler
-    if (audioHandlers[conf.stream]) {
-        handler = audioHandlers[conf.stream]
-    } else if (conf.type == "application/ogg" || conf.type == "audio/ogg") {
-        handler = new OGGHandler()
-    } else {
-        handler = new AudioHandler()
-    }
-    audioHandlers[conf.stream] = handler
+    if (first) {
+        let handler
+        if (audioHandlers[conf.stream]) {
+            handler = audioHandlers[conf.stream]
+        } else if (conf.type == "application/ogg" || conf.type == "audio/ogg") {
+            handler = new OGGHandler()
+        } else {
+            handler = new AudioHandler()
+        }
+        audioHandlers[conf.stream] = handler
 
-    handler.input(streamLayers[conf.stream].getStream())
+        handler.input(streamLayers[conf.stream].getStream())
+    }
 
     if (global.config.hls && conf.type !== "application/ogg" && first) { // OGG is not supported in HLS
         hlsHanders[conf.stream] = new HLSHandler(inputStreams[conf.stream], conf.name)
