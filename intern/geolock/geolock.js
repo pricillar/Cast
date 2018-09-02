@@ -10,12 +10,12 @@ export function isAllowed(ip) {
         return true
     }
     let ipLocation = maxmind.get(ip)
-    let isWhilelistMode = config.geolock.mode === "whitelist"
+    let isAllowlistMode = config.geolock.mode === "allowlist" || config.geolock.mode === "whitelist" // the last value is deprecated
     if (!ipLocation) {
-        return isWhilelistMode || config.geolock.allowUnknown
+        return isAllowlistMode || config.geolock.allowUnknown
     }
     if (config.geolock.countryCodes.indexOf(ipLocation.country.iso_code) === -1) {
-        return !isWhilelistMode
+        return !isAllowlistMode
     }
-    return isWhilelistMode
+    return isAllowlistMode
 }
