@@ -1,7 +1,10 @@
 doctype html
 html(lang="en")
   head
-    title Cast
+    if isStreaming
+        title #{streamInfo.name}
+    else
+        title Cast
     link(href="/static/bootstrap.min.css",rel="stylesheet")
     link(href="/static/font-awesome.min.css",rel="stylesheet")
     link(href="/static/fontello.css",rel="stylesheet")
