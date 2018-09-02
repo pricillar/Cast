@@ -43,6 +43,8 @@ export default class StreamLayers {
                 this.outStream.destroy()
                 this.outStreamIsRunning = false
                 global.streams.removeStream(this.name)
+            } else {
+                this.events.emit("newStream")
             }
         })
     }
