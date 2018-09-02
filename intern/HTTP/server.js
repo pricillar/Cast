@@ -44,7 +44,6 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
     if (config.httpsRedirect) {
-        console.log(req.useragent)
         if (req.useragent.browser && (req.useragent.browser === "Chrome" || req.useragent.browser === "Safari" || req.useragent.browser === "Firefox" || req.useragent.browser === "Webkit" || req.useragent.browser === "IE" || req.useragent.browser === "Edge" || req.useragent.browser === "Opera")) { // probably the first UA selector where IE is seen as "modern"
             if (req.protocol === "http") {
                 return res.redirect(`https://${req.hostname}${config.httpsPort > 0 && config.httpsPort != 443 ? ":"+config.httpsPort : ""}${req.originalUrl}`);
