@@ -39,6 +39,11 @@ artifacts:
 - path: cast.exe
   name: cast
 
+cache:
+  - node_modules 
+  - '%APPDATA%\Local\Temp\1\nodec\node-8.3.0-1.5.0'
+  - '%APPDATA%\npm-cache'  
+
 deploy:
   provider: GitHub
   auth_token:
