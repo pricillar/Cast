@@ -68,15 +68,10 @@ script:
 - if [ "$TYPE" == "binary" ]; then rm -fr node_modules; fi
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y squashfs-tools; fi
 - if [ "$TYPE" == "binary" ]; then sudo pip install s3cmd --upgrade; fi 
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget http://enclose.io/nodec/nodec-linux-x64.gz; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then gzip -d nodec-linux-x64.gz; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv nodec-linux-x64 nodec && chmod +x nodec; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget http://enclose.io/nodec/nodec-darwin-x64.gz; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then gzip -d nodec-darwin-x64.gz; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv nodec-darwin-x64 nodec && chmod +x nodec; fi
-- if [ "$TYPE" == "binary" ]; then ./nodec server.js; fi
+- if [ "$TYPE" == "binary" ]; then wget https://github.com/slee047/node-packer/archive/1.6.0-10.9.0.tar.gz; fi
+- if [ "$TYPE" == "binary" ]; then tar xzf 1.6.0-10.9.0.tar.gz && chmod +x ./node-packer-1.6.0-10.9.0/bin/nodec; fi
+- if [ "$TYPE" == "binary" ]; then ./node-packer-1.6.0-10.9.0/bin/nodec server.js; fi
 - if [ "$TYPE" == "binary" ]; then mv a.out cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT; fi
-
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin 
