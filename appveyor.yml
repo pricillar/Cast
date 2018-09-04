@@ -1,0 +1,52 @@
+version: 1.0.{build}
+
+clone_folder: C:\projects\cast
+
+build_script:
+
+- ps: >-
+
+    Add-Type -assembly "system.io.compression.filesystem"
+
+    cd C:\
+
+    Start-FileDownload https://github.com/pmq20/squashfuse/files/691217/sqfs43-win32.zip -FileName C:\sqfs43-win32.zip
+
+    [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\sqfs43-win32.zip", "C:\Windows")
+
+    mksquashfs -version
+
+    where mksquashfs
+
+    dir C:\Windows\mksquashfs.exe
+
+    C:\Windows\mksquashfs.exe -version
+
+    Invoke-WebRequest -Uri http://enclose.io/nodec/nodec-x64.zip -OutFile C:\nodec-x64.zip
+
+    [io.compression.zipfile]::ExtractToDirectory("C:\nodec-x64.zip", "C:\")
+
+    cd C:\projects\cast
+
+    C:\nodec-v1.5.0-x64.exe server.js
+    
+    mv a.exe cast.exe
+
+test: off
+
+artifacts:
+
+- path: cast.exe
+  name: cast
+
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: +d2UJegJnX376FoU5evqeomUPD2zTCOHjSucBs3xmjz6Olc5H61DbF2Y1JF4qYYx
+  artifact: cast.exe 
+  draft: false
+  prerelease: false
+  force_update: true
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
