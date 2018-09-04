@@ -10,25 +10,15 @@ build_script:
 
     cd C:\
 
+    Start-FileDownload  https://github.com/slee047/node-packer/archive/1.6.0-10.9.0.zip -FileName C:\nodec.zip
     Start-FileDownload https://github.com/pmq20/squashfuse/files/691217/sqfs43-win32.zip -FileName C:\sqfs43-win32.zip
 
     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\sqfs43-win32.zip", "C:\Windows")
-
-    mksquashfs -version
-
-    where mksquashfs
-
-    dir C:\Windows\mksquashfs.exe
-
-    C:\Windows\mksquashfs.exe -version
-
-    Invoke-WebRequest -Uri http://enclose.io/nodec/nodec-x64.zip -OutFile C:\nodec-x64.zip
-
-    [io.compression.zipfile]::ExtractToDirectory("C:\nodec-x64.zip", "C:\")
+    [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\nodec.zip", "C:\nodec")
 
     cd C:\projects\cast
 
-    C:\nodec-v1.5.0-x64.exe server.js
+    C:\nodec\bin\nodec.bat server.js
     
     mv a.exe cast.exe
 
@@ -41,7 +31,7 @@ artifacts:
 
 cache:
   - node_modules 
-  - '%APPDATA%\Local\Temp\1\nodec\node-8.3.0-1.5.0'
+  - '%APPDATA%\Local\Temp\1\nodec\'
   - '%APPDATA%\npm-cache'  
 
 deploy:
