@@ -119,8 +119,9 @@ const listener = tcp.createServer((c) => {
 
         if (continueNeeded) {
             c.write("HTTP/1.1 100 Continue\n")
+        } else {
+            c.write("HTTP/1.1 200 OK\n\n")
         }
-        c.write("HTTP/1.1 200 OK\n\n")
         gotHeaders = true
     }
 
