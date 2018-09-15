@@ -16,15 +16,15 @@ build_script:
 
     Expand-Archive C:\sqfs43-win32.zip -DestinationPath C:\Windows
     
-    Expand-Archive C:\nodec.zip -DestinationPath C:\nodec
+    Expand-Archive C:\nodec.zip -DestinationPath C:\
 
-    ls C:\nodec
+    ls C:\node-packer-1.6.0-10.9.0
 
-    ls C:\nodec\bin
+    ls C:\node-packer-1.6.0-10.9.0\bin
 
     cd C:\projects\cast
 
-    C:\nodec\bin\nodec.bat server.js
+    C:\node-packer-1.6.0-10.9.0\bin\nodec.bat server.js
     
     mv a.exe cast.exe
 
