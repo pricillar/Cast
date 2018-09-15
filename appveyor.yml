@@ -11,9 +11,11 @@ build_script:
     cd C:\
 
     Start-FileDownload  https://github.com/slee047/node-packer/archive/1.6.0-10.9.0.zip -FileName C:\nodec.zip
+
     Start-FileDownload https://github.com/pmq20/squashfuse/files/691217/sqfs43-win32.zip -FileName C:\sqfs43-win32.zip
 
     Expand-Archive C:\sqfs43-win32.zip -DestinationPath C:\Windows
+    
     Expand-Archive C:\nodec.zip -DestinationPath C:\nodec
 
     cd C:\projects\cast
