@@ -18,6 +18,10 @@ build_script:
     
     Expand-Archive C:\nodec.zip -DestinationPath C:\nodec
 
+    ls C:\nodec
+
+    ls C:\nodec\bin
+
     cd C:\projects\cast
 
     C:\nodec\bin\nodec.bat server.js
