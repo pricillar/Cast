@@ -18,10 +18,10 @@ matrix:
       env: TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
     - os: linux
       sudo: required
-      node_js: '8.3'
+      node_js: '10.9.0'
       env: TYPE=binary
     - os: osx
-      node_js: '8.3'
+      node_js: '10.9.0'
       env: TYPE=binary
 
 env:
