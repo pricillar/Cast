@@ -18,10 +18,10 @@ matrix:
       env: TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
     - os: linux
       sudo: required
-      node_js: '10.9.0'
+      node_js: '8.11.4'
       env: TYPE=binary
     - os: osx
-      node_js: '10.9.0'
+      node_js: '8.11.4'
       env: TYPE=binary
 
 env:
@@ -68,9 +68,9 @@ script:
 - if [ "$TYPE" == "binary" ]; then rm -fr node_modules; fi
 - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y squashfs-tools; fi
 - if [ "$TYPE" == "binary" ]; then sudo pip install s3cmd --upgrade; fi 
-- if [ "$TYPE" == "binary" ]; then wget https://github.com/slee047/node-packer/archive/1.6.0-10.9.0.tar.gz; fi
-- if [ "$TYPE" == "binary" ]; then tar xzf 1.6.0-10.9.0.tar.gz && chmod +x ./node-packer-1.6.0-10.9.0/bin/nodec; fi
-- if [ "$TYPE" == "binary" ]; then ./node-packer-1.6.0-10.9.0/bin/nodec server.js; fi
+- if [ "$TYPE" == "binary" ]; then wget https://github.com/slee047/node-packer/archive/1.6.0-8.11.4.tar.gz; fi
+- if [ "$TYPE" == "binary" ]; then tar xzf 1.6.0-8.11.4.tar.gz && chmod +x ./node-packer-1.6.0-8.11.4/bin/nodec; fi
+- if [ "$TYPE" == "binary" ]; then ./node-packer-1.6.0-8.11.4/bin/nodec server.js; fi
 - if [ "$TYPE" == "binary" ]; then mv a.out cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT; fi
 
 after_success:
