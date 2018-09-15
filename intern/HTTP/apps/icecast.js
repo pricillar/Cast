@@ -1,4 +1,12 @@
+import xml from "xml"
+import auth from "http-auth"
+
 export default (app) => {
+    const basic = auth.basic({
+        realm: "Cast's Icecast compatible backend",
+    }, (username, password, callback) => { // Custom authentication method.
+        callback(password === config.apikey);
+    });
 
     app.get("/status-json.xsl", (req, res) => {
         const activeStreams = streams.getActiveStreams()
@@ -60,4 +68,63 @@ export default (app) => {
         res.set("Content-Type", "text/xml");
         res.send(`<?xml version="1.0"?>\n<iceresponse><message>Metadata update successful</message><return>1</return></iceresponse>`)
     })
+
+    app.get("/admin/listclients", auth.connect(basic), (req, res) => {
+        let stream
+        let mount = req.query.mount
+        if (!mount) {
+            stream = global.streams.primaryStream
+            mount = global.streams.primaryStream
+        } else {
+            stream = mount.replace("/live/", "").replace("/streams/", "").replace("/", "")
+        }
+
+        if (!global.streams.isStreamInUse(stream)) {
+            return res.status(404).send("Stream not in use")
+        }
+
+        var outXML = [
+            { Listeners: global.streams.realNumberOfListerners(stream) },
+        ]
+
+        for (let listener of global.streams.getListeners(stream)) {
+            outXML.push({
+                listener: [{
+                    IP: listener.ip,
+                },
+                { UserAgent: listener.client },
+                { Connected: (Math.round((new Date()).getTime() / 1000) - listener.starttime) },
+                { ID: listener.id },
+                ]
+            })
+        }
+
+        res.setHeader("Content-Type", "text/xml")
+        res.send(xml({
+            icestats: [{ source: [{ _attr: { mount: mount } }, ...outXML] }],
+        }))
+
+    })
+
+    app.get("/admin/killsource", auth.connect(basic), (req, res) => {
+        let stream
+        let mount = req.query.mount
+        if (!mount) {
+            stream = global.streams.primaryStream
+            mount = global.streams.primaryStream
+        } else {
+            stream = mount.replace("/live/", "").replace("/streams/", "").replace("/", "")
+        }
+
+        if (!global.streams.isStreamInUse(stream)) {
+            return res.status(404).send("Stream not in use")
+        }
+
+        global.streams.endStream(stream)
+
+        res.setHeader("Content-Type", "text/xml")
+        res.send("<iceresponse><message>Source Removed</message><return>1</return></iceresponse>")
+    })
+
+    
 }
