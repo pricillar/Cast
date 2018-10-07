@@ -4,8 +4,10 @@ pipeline:
   amd64-binaries:
     image: ubuntu
     secrets: [ scwrc ]
+    environment:
+    - scwrc: ${scwrc}
     commands:
-      - echo $$scwrc | base64 -d > ~/.scwrc
+      - echo "$scwrc" > ~/.scwrc
       - chmod 600 ~/.scwrc
       - wc ~/.scwrc
       - apt update
