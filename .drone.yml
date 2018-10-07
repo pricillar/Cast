@@ -25,7 +25,7 @@ pipeline:
       - scw cp drone-cast-$DRONE_COMMIT_SHA:/root/Cast/a.out ./
       - mkdir dist
       - mv a.out dist/cast-$DRONE_TAG-linux-amd64
-      - scw kill drone-cast-$DRONE_COMMIT_SHA
+      - scw stop -t drone-cast-$DRONE_COMMIT_SHA
     # when:
     #   event: tag
       
@@ -52,7 +52,7 @@ pipeline:
       - scw exec drone-cast-arm64-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && cd /root/Cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js >/tmp/buildlog 2>&1"'
       - scw cp drone-cast-arm64-$DRONE_COMMIT_SHA:/root/Cast/a.out ./
       - mv a.out dist/cast-$DRONE_TAG-linux-arm64
-      - scw kill drone-cast-arm64-$DRONE_COMMIT_SHA
+      - scw stop -t drone-cast-arm64-$DRONE_COMMIT_SHA
     # when:
     #   event: tag
 
