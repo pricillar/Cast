@@ -17,7 +17,7 @@ pipeline:
       - scw start -w drone-cast-$DRONE_COMMIT_SHA
       - sleep 10
       - scw cp ./ drone-cast-$DRONE_COMMIT_SHA:/root/
-      - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "apt update && apt-get install -y squashfs-tools wget ruby"'
+      - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "apt update && apt-get install -y squashfs-tools wget ruby build-essential python"'
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "cd /root/ && wget https://github.com/slee047/node-packer/archive/1.6.0-8.11.4.tar.gz && tar xzf 1.6.0-8.11.4.tar.gz && chmod +x ./node-packer-1.6.0-8.11.4/bin/nodec"'
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash"'
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && nvm install 8.11.4"'
