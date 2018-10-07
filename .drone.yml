@@ -1,8 +1,9 @@
 platform: linux/arm64
 
 pipeline:
-  binaries:
+  amd64-binaries:
     image: ubuntu
+    secrets: [ scwrc ]
     commands:
       - apt update
       - apt install -y ssh wget
