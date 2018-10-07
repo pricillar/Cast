@@ -1,7 +1,6 @@
 pipeline:
   binaries:
-    image: ubntu
-    secrets: []
+    image: ubuntu
     commands:
       - apt update
       - apt install -y ssh
