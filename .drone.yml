@@ -12,8 +12,15 @@ pipeline:
       - rm -f /tmp/scw.deb
       - echo $$scwrc | base64 -d > ~/.scwrc
       - chmod 600 ~/.scwrc
-      - scw create --commercial-type=c2s --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic;
+      - scw create --commercial-type=c2s --tmp-ssh-key --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic
       - scw start -w drone-cast-$DRONE_COMMIT_SHA
+      - scw cp ./ drone-cast-$DRONE_COMMIT_SHA:/root/cast/
+      - scw exec drone-cast-$DRONE_COMMIT_SHA bash -c "apt update && apt-get install -y squashfs-tools wget ruby"
+      - scw exec drone-cast-$DRONE_COMMIT_SHA bash -c "cd /root/ && wget https://github.com/slee047/node-packer/archive/1.6.0-8.11.4.tar.gz && tar xzf 1.6.0-8.11.4.tar.gz && chmod +x ./node-packer-1.6.0-8.11.4/bin/nodec"
+      - scw exec drone-cast-$DRONE_COMMIT_SHA bash -c "wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash"
+      - scw exec drone-cast-$DRONE_COMMIT_SHA bash -c "nvm install 8.11.4"
+      - scw exec drone-cast-$DRONE_COMMIT_SHA bash -c "cd /root/cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js"
+      - scw cp drone-cast-$DRONE_COMMIT_SHA:/root/cast/a.out ./
       - scw kill drone-cast-$DRONE_COMMIT_SHA
 #  when:
 #    event: tag
