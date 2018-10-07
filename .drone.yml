@@ -5,7 +5,7 @@ pipeline:
     image: ubuntu
     secrets: [ scwrc ]
     commands:
-      - echo "$scwrc" > ~/.scwrc
+      - echo "$SCWRC" > ~/.scwrc
       - chmod 600 ~/.scwrc
       - wc ~/.scwrc
       - apt update
