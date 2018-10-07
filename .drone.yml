@@ -5,6 +5,16 @@ pipeline:
     image: ubuntu
     commands:
       - apt update
-      - apt install -y ssh
+      - apt install -y ssh wget
+      - wget "https://github.com/scaleway/scaleway-cli/releases/download/v1.17/scw_1.17_arm64.deb" -O /tmp/scw.deb
+      - dpkg -i /tmp/scw.deb 
+      - rm -f /tmp/scw.deb
+      - echo $$scwrc | base64 -d > ~/.scwrc
+      - scw create --commercial-type=c2s --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic;
+      - scw start -w drone-cast-$DRONE_COMMIT_SHA
+      - scw kill drone-cast-$DRONE_COMMIT_SHA
+#  when:
+#    event: tag
+
 branches:
   include: [ master, build-binaries ]
