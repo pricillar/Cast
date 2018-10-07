@@ -5,14 +5,15 @@ pipeline:
     image: ubuntu
     secrets: [ scwrc ]
     commands:
+      - echo $$scwrc | base64 -d > ~/.scwrc
+      - chmod 600 ~/.scwrc
+      - wc ~/.scwrc
       - apt update
       - apt install -y ssh wget
       - ssh-keygen -q -f /root/.ssh/id_rsa -N ""
       - wget "https://github.com/scaleway/scaleway-cli/releases/download/v1.17/scw_1.17_arm64.deb" -O /tmp/scw.deb
       - dpkg -i /tmp/scw.deb 
       - rm -f /tmp/scw.deb
-      - echo $$scwrc | base64 -d > ~/.scwrc
-      - chmod 600 ~/.scwrc
       - scw create --commercial-type=c2s --tmp-ssh-key --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic
       - scw start -w drone-cast-$DRONE_COMMIT_SHA
       - scw cp ./ drone-cast-$DRONE_COMMIT_SHA:/root/cast/
