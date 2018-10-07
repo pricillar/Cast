@@ -50,8 +50,8 @@ pipeline:
       - scw exec drone-cast-arm64-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && cd /root/Cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js"'
       - scw cp drone-cast-arm64-$DRONE_COMMIT_SHA:/root/Cast/a.out ./
       - scw kill drone-cast-arm64-$DRONE_COMMIT_SHA
-  when:
-    event: tag
+    when:
+      event: tag
 
 branches:
   include: [ master, build-binaries ]
