@@ -13,7 +13,7 @@ pipeline:
       - wget "https://github.com/scaleway/scaleway-cli/releases/download/v1.17/scw_1.17_arm64.deb" -O /tmp/scw.deb
       - dpkg -i /tmp/scw.deb 
       - rm -f /tmp/scw.deb
-      - scw create --commercial-type=c2m --tmp-ssh-key --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic
+      - scw create --commercial-type=c2s --tmp-ssh-key --name="drone-cast-$DRONE_COMMIT_SHA" ubuntu-bionic
       - scw start -w drone-cast-$DRONE_COMMIT_SHA
       - sleep 10
       - scw cp ./ drone-cast-$DRONE_COMMIT_SHA:/root/
@@ -24,8 +24,8 @@ pipeline:
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && cd /root/Cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js"'
       - scw cp drone-cast-$DRONE_COMMIT_SHA:/root/Cast/a.out ./
       - scw kill drone-cast-$DRONE_COMMIT_SHA
-#  when:
-#    event: tag
+  when:
+    event: tag
   arm64-binaries:
     image: ubuntu
     secrets: [ scwrc ]
