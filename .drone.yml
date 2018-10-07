@@ -22,7 +22,7 @@ pipeline:
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash"'
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && nvm install 8.11.4"'
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && cd /root/Cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js >/tmp/buildlog 2>&1"'
-      - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(scw inspect -f '{{.PublicAddress.IP}}' server:drone-cast-arm64-$DRONE_COMMIT_SHA):/root/Cast/a.out ./
+      - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(scw inspect -f '{{.PublicAddress.IP}}' server:drone-cast-$DRONE_COMMIT_SHA):/root/Cast/a.out ./
       - mkdir dist
       - mv a.out dist/cast-$DRONE_TAG-linux-amd64
       - scw stop -t drone-cast-$DRONE_COMMIT_SHA
