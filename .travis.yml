@@ -16,13 +16,13 @@ matrix:
       sudo: required
       node_js: '10'
       env: TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
-    - os: linux
-      sudo: required
-      node_js: '8.11.4'
-      env: TYPE=binary
-    - os: osx
-      node_js: '8.11.4'
-      env: TYPE=binary
+    # - os: linux
+    #   sudo: required
+    #   node_js: '8.11.4'
+    #   env: TYPE=binary
+    # - os: osx
+    #   node_js: '8.11.4'
+    #   env: TYPE=binary
 
 env:
     global:
@@ -47,11 +47,11 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install docker-ce python2.7; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install qemu qemu-user-static qemu-user binfmt-support; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --rm --privileged multiarch/qemu-user-static:register; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install squashfs; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ln -s /usr/local/bin/g++-4.9 /usr/local/bin/g++-4.8; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $S3CFG | base64 -d >$HOME/.s3cfg; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo $S3CFG | base64 -D >$HOME/.s3cfg; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install squashfs; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ln -s /usr/local/bin/g++-4.9 /usr/local/bin/g++-4.8; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $S3CFG | base64 -d >$HOME/.s3cfg; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo $S3CFG | base64 -D >$HOME/.s3cfg; fi
 
 os:
 - linux
@@ -65,13 +65,13 @@ script:
 - if [ "$TYPE" == "docker" ]; then tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz; fi
 - if [ "$TYPE" == "docker" ]; then docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./; fi
 
-- if [ "$TYPE" == "binary" ]; then rm -fr node_modules; fi
-- if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y squashfs-tools; fi
-- if [ "$TYPE" == "binary" ]; then sudo pip install s3cmd --upgrade; fi 
-- if [ "$TYPE" == "binary" ]; then wget https://github.com/slee047/node-packer/archive/1.6.0-8.11.4.tar.gz; fi
-- if [ "$TYPE" == "binary" ]; then tar xzf 1.6.0-8.11.4.tar.gz && chmod +x ./node-packer-1.6.0-8.11.4/bin/nodec; fi
-- if [ "$TYPE" == "binary" ]; then travis_wait ./node-packer-1.6.0-8.11.4/bin/nodec server.js; fi
-- if [ "$TYPE" == "binary" ]; then mv a.out cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT; fi
+# - if [ "$TYPE" == "binary" ]; then rm -fr node_modules; fi
+# - if [ "$TYPE" == "binary" ] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y squashfs-tools; fi
+# - if [ "$TYPE" == "binary" ]; then sudo pip install s3cmd --upgrade; fi 
+# - if [ "$TYPE" == "binary" ]; then wget https://github.com/slee047/node-packer/archive/1.6.0-8.11.4.tar.gz; fi
+# - if [ "$TYPE" == "binary" ]; then tar xzf 1.6.0-8.11.4.tar.gz && chmod +x ./node-packer-1.6.0-8.11.4/bin/nodec; fi
+# - if [ "$TYPE" == "binary" ]; then travis_wait ./node-packer-1.6.0-8.11.4/bin/nodec server.js; fi
+# - if [ "$TYPE" == "binary" ]; then mv a.out cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT; fi
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin 
@@ -79,4 +79,4 @@ after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
   - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
-  - if [ "$TYPE" == "binary" ]; then s3cmd put ./cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT s3://cast/; fi
+  # - if [ "$TYPE" == "binary" ]; then s3cmd put ./cast-$TRAVIS_OS_NAME-$TRAVIS_COMMIT s3://cast/; fi
