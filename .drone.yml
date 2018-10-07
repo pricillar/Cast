@@ -1,0 +1,9 @@
+pipeline:
+  binaries:
+    image: ubntu
+    secrets: []
+    commands:
+      - apt update
+      - apt install -y ssh
+branches:
+  include: [ master, build-binaries ]
