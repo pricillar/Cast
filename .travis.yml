@@ -54,7 +54,7 @@ script:
 - babel ./ -d /tmp/testbuild --minified --ignore 'node_modules/'
 - git reset --hard
 - rm -fr node_modules/
-- if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sonar-scanner fi
+- if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sonar-scanner; fi
 - if [ "$TYPE" == "docker" ]; then wget -N https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_VER/x86_64_qemu-${QEMU_ARCH}-static.tar.gz
   ; fi
 - if [ "$TYPE" == "docker" ]; then tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz;
