@@ -1,46 +1,51 @@
 language: node_js
 node_js:
 - '10'
-
 matrix:
   include:
-    - os: linux
-      sudo: required
-      node_js: '10'
-      env: TYPE=docker ARCH=amd64 ARCHREPO=amd64 QEMU_ARCH=x86_64
-    - os: linux
-      sudo: required
-      node_js: '10'
-      env: TYPE=docker ARCH=armhf ARCHREPO=arm32v7 QEMU_ARCH=arm
-    - os: linux
-      sudo: required
-      node_js: '10'
-      env: TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
-
+  - os: linux
+    sudo: required
+    node_js: '10'
+    env: TYPE=docker ARCH=amd64 ARCHREPO=amd64 QEMU_ARCH=x86_64
+  - os: linux
+    sudo: required
+    node_js: '10'
+    env: TYPE=docker ARCH=armhf ARCHREPO=arm32v7 QEMU_ARCH=arm
+  - os: linux
+    sudo: required
+    node_js: '10'
+    env: TYPE=docker ARCH=arm64 ARCHREPO=arm64v8 QEMU_ARCH=aarch64
 env:
-    global:
-      - QEMU_VER=v2.9.1
-      - DOCKER_REPO=innovate/cast
-
+  global:
+  - QEMU_VER=v2.9.1
+  - DOCKER_REPO=innovate/cast
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+  sonarcloud:
+    organization: innovate-technologies
+    token:
+      secure: uOfDrsKoJ7vxmG67xsVuvdzem+C13e4YYbQrjzED1YAe5lZal1o5IPbLQlk2kSB1RyuDQSmRyzVqP7xp0XlzwuYc3SuFmUfLK6Cm2ZdtyfADR3heqpRGGshVO70j5dDu0VWcqxF9OhkC5EAZDZf1EEuL/WoIkgLXmey2GHrOjiWsugs1zJ3xhFfCB01cQM1CLUeOEmnXlSTv7czp+xwtLAPFbV4g/Kv8VCY+GxETBIw3lGem9NFtXxsvPJIScc9y+wGvbZiRhJW4NmLYN/CIw7cdTaXJCT/hvPQCnRWMK4lBZi+SmLWfUdS+H8NajX92oBgbBaOv6RrS+isMUQnXngdr8/uZMejuXKW140YY5pkf8n2a5czvOr+R7ZddM9ucS6He3xmo6S+oB3tMY7PXaF5U7CMcsoXNTBucAcjpOLxpn5oYEHSUKRATTkXq1L74Q4lNsbwYlGmItNxtraYNML4gRkTDC7VeWo1uOwOoGBMwGB78vj/+sQyulqK1dMi6QjcZvtEZ1+IOCZXGZl8npMiKIPS/AGp3QkqWyF+EVcOBeXHd6lEcrLYP/idI9NbfJoEGgvQ9c2MnoJtdll5v07orQRJQSqYcYEjXRdgiJ0a3uznGXJM1luq+fU+z52WslmNrsaTxx8Zbs7Nb+loZgNLfsS8uCFT3dpjYT1W7VSg=
 cache:
   directories:
-  - /tmp/nodec/
-
+  - "/tmp/nodec/"
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:deadsnakes/ppa --yes; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install docker-ce python2.7; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install qemu qemu-user-static qemu-user binfmt-support; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --rm --privileged multiarch/qemu-user-static:register; fi
-
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:deadsnakes/ppa
+  --yes; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -fsSL https://download.docker.com/linux/ubuntu/gpg
+  | sudo apt-key add -; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository "deb [arch=amd64]
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install docker-ce python2.7;
+  fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install qemu qemu-user-static
+  qemu-user binfmt-support; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --rm --privileged multiarch/qemu-user-static:register;
+  fi
 os:
 - linux
 script:
@@ -49,13 +54,23 @@ script:
 - babel ./ -d /tmp/testbuild --minified --ignore 'node_modules/'
 - git reset --hard
 - rm -fr node_modules/
-- if [ "$TYPE" == "docker" ]; then wget -N https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_VER/x86_64_qemu-${QEMU_ARCH}-static.tar.gz ; fi
-- if [ "$TYPE" == "docker" ]; then tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz; fi
-- if [ "$TYPE" == "docker" ]; then docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./; fi
-
+- if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then sonar-scanner; fi
+- if [ "$TYPE" == "docker" ]; then wget -N https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_VER/x86_64_qemu-${QEMU_ARCH}-static.tar.gz
+  ; fi
+- if [ "$TYPE" == "docker" ]; then tar -xvf x86_64_qemu-${QEMU_ARCH}-static.tar.gz;
+  fi
+- if [ "$TYPE" == "docker" ]; then docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT
+  --build-arg ARCHREPO="$ARCHREPO" --build-arg QEMU_ARCH="$QEMU_ARCH" ./; fi
 after_success:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin 
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker push $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master; docker push $DOCKER_REPO:$ARCH-master ; fi
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TYPE" == "docker" ]; then docker
+  push $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT ; fi
+- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] &&
+  [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master;
+  docker push $DOCKER_REPO:$ARCH-master ; fi
+- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] &&
+  [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-master;
+  docker push $DOCKER_REPO:$ARCH-master ; fi
+- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] &&
+  [ "$TRAVIS_TAG" != "" ] && [ "$TYPE" == "docker" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT
+  $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG ; fi
