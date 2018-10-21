@@ -35,6 +35,10 @@ build_script:
 
 test: off
 
+branches:
+  only:
+    - master
+
 artifacts:
 
 - path: cast.exe
