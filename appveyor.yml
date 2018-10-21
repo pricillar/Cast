@@ -33,6 +33,12 @@ build_script:
     
     mv a.exe cast.exe
 
+    mkdir C:\dist\
+
+    mv cast.exe C:\dist\
+    
+    Compress-Archive -Path C:\dist\*.txt -Update -DestinationPath cast-windows.zip
+
 test: off
 
 branches:
@@ -41,7 +47,7 @@ branches:
 
 artifacts:
 
-- path: cast.exe
+- path: cast-windows.zip
   name: cast
 
 cache:
@@ -53,7 +59,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: +d2UJegJnX376FoU5evqeomUPD2zTCOHjSucBs3xmjz6Olc5H61DbF2Y1JF4qYYx
-  artifact: cast.exe 
+  artifact: cast-windows.zip
   draft: false
   prerelease: false
   force_update: true
