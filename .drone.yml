@@ -57,7 +57,7 @@ pipeline:
   #     event: tag
 
   github_release:
-    image: plugins/github-release:arm64
+    image: plugins/github-release:linux-arm64
     secrets: [ github_token ]
     files: dist/*
     when:
