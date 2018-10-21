@@ -24,7 +24,10 @@ pipeline:
       - scw exec drone-cast-$DRONE_COMMIT_SHA 'bash -c "source $HOME/.nvm/nvm.sh && cd /root/Cast/ && ../node-packer-1.6.0-8.11.4/bin/nodec ./server.js >/tmp/buildlog 2>&1"'
       - scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(scw exec drone-cast-$DRONE_COMMIT_SHA 'curl myip.ninja'):/root/Cast/a.out ./
       - mkdir dist
-      - mv a.out dist/cast-$DRONE_TAG-linux-amd64
+      - mv a.out cast
+      - tar -cvzf cast-$DRONE_TAG-linux-amd64.tar.gz cast
+      - rm -f cast
+      - mv cast-$DRONE_TAG-linux-amd64.tar.gz dist/
       - scw stop -t drone-cast-$DRONE_COMMIT_SHA
     when:
       event: tag
