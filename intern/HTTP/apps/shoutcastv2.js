@@ -30,7 +30,7 @@ export default function (app) {
 
     })
 
-    app.get("/statistics", (req, res) => {
+    const scStats = (req, res) => {
         const activeStreams = streams.getActiveStreams()
         let mode = "xml"
         if (req.query.json === "1") {
@@ -131,7 +131,10 @@ export default function (app) {
             ],
         }))
 
-    })
+    }
+
+    app.get("/statistics", scStats)
+    app.get("/stats", scStats)
 
     app.get("/7.html", (req, res) => { // Personal option: WHY USE THIS????
         const stream = sidToStream(req.query.sid)
