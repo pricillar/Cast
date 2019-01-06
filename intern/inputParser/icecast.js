@@ -161,7 +161,11 @@ const parseGet = (info) => {
     const arrayOfKeyValue = info.split("&")
     for (let keyValue of arrayOfKeyValue) {
         let keyValueArray = keyValue.split("=")
-        output[keyValueArray[0]] = decodeURIComponent(keyValueArray[1])
+        try { 
+            output[keyValueArray[0]] = decodeURIComponent(keyValueArray[1])
+        } catch(e) { 
+            console.log(e); 
+        }
     }
     return output
 }
