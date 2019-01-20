@@ -1,6 +1,8 @@
 ARG ARCHREPO
 FROM ${ARCHREPO}/node:10-stretch
 
+ENV NODE_ENV=production
+
 ARG QEMU_ARCH
 COPY qemu-${QEMU_ARCH}-static /usr/bin/
 
