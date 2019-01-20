@@ -20,3 +20,5 @@ config.json
 
 nodec-linux-x64
 .envrc
+
+bin/
