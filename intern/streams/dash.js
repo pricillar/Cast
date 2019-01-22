@@ -61,7 +61,9 @@ export default class DASHHandler {
     }
 
     stop() {
-        this.process.kill("SIGKILL")
+        if (this.process) {
+            this.process.kill("SIGKILL")
+        }
         clearInterval(this.chunkTimer)
         rimraf(this.tempPath, () => {})
     }

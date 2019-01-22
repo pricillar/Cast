@@ -50,7 +50,9 @@ export default class HLSHandler {
     }
 
     stop() {
-        this.process.kill("SIGKILL")
+        if (this.process) {
+            this.process.kill("SIGKILL")
+        }
         rimraf(this.tempPath, () => {})
     }
 }
