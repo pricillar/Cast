@@ -65,7 +65,9 @@ export default class DASHHandler {
             this.process.kill("SIGKILL")
         }
         clearInterval(this.chunkTimer)
-        rimraf(this.tempPath, () => {})
+        if (this.tempPath) {
+            rimraf(this.tempPath, () => {})
+        }
     }
 
     async deleteOldChunks() {
