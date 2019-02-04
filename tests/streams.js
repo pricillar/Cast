@@ -144,7 +144,7 @@ test.serial("test getActiveStreams and sort them", t => {
     t.deepEqual(global.streams.getActiveStreams(), [ "64kbps", "128kbps" ])
 })
 
-test.serial("test listenerTunedIn", t => {
+test.serial("test listenerTunedIn", async t => {
     t.plan(4)
     const now = Math.round((new Date()).getTime() / 1000)
 
@@ -157,7 +157,7 @@ test.serial("test listenerTunedIn", t => {
         id: 1,
     }))
     global.streams.addStream(new stream.PassThrough(), testStreamInfo)
-    let id = global.streams.listenerTunedIn("128kbps", "::1", "Unit/1.1", now)
+    let id = await global.streams.listenerTunedIn("128kbps", "::1", "Unit/1.1", now)
     t.is(id, 1)
     t.is(global.streams.getListeners("128kbps").length, 1)
     t.is(global.streams.numberOfListerners("128kbps"), 1)
