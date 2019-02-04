@@ -6,9 +6,13 @@ import AudioHandler from "./audio"
 import OGGHandler from "./ogg"
 
 if (config.geoservices && config.geoservices.enabled && !global.maxmind) {
-    global.maxmind = require("maxmind").openSync(global.config.geoservices.maxmindDatabase)
-    if (!maxmind) {
-        console.log("Error loading Maxmind Database")
+    if (config.geoservices.customModule) {
+        global.maxmind = require(config.geolock.customModule)
+    } else {
+        global.maxmind = require("maxmind").openSync(global.config.geoservices.maxmindDatabase)
+        if (!maxmind) {
+            console.log("Error loading Maxmind Database")
+        }
     }
 }
 
@@ -191,7 +195,7 @@ const getActiveStreams = () => {
     return returnStreams
 }
 
-const listenerTunedIn = (streamName, ip, client, starttime, hls) => {
+const listenerTunedIn = async (streamName, ip, client, starttime, hls) => {
     if (!streamListeners[streamName]) {
         streamListeners[streamName] = []
     }
@@ -211,16 +215,24 @@ const listenerTunedIn = (streamName, ip, client, starttime, hls) => {
         id: latestListenerID[streamName],
     }
     if (config.geoservices && config.geoservices.enabled) {
-        var ipInfo = global.maxmind.get(ip)
-        if (ipInfo !== null && ipInfo.country) {
-            info.country = ipInfo.country.names.en
-            info.countryCode = ipInfo.country.iso_code
-            info.location = {
-                "latitude": ipInfo.location.latitude,
-                "longitude": ipInfo.location.longitude,
-                "accuracy": ipInfo.location.accuracy_radius,
+        try {
+            var ipInfo = global.maxmind.get(ip)
+            if (typeof ipInfo.then === "function") {
+                ipInfo = await ipInfo
             }
+            if (ipInfo !== null && ipInfo.country) {
+                info.country = ipInfo.country.names.en
+                info.countryCode = ipInfo.country.iso_code
+                info.location = {
+                    "latitude": ipInfo.location.latitude,
+                    "longitude": ipInfo.location.longitude,
+                    "accuracy": ipInfo.location.accuracy_radius,
+                }
+            }
+        } catch (error) {
+            console.log(error)
         }
+       
     }
 
     streamListeners[streamName][info.id] = info

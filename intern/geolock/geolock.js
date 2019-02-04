@@ -1,21 +1,35 @@
 if (config.geolock && config.geolock.enabled && !global.maxmind) {
-    global.maxmind = require("maxmind").openSync(global.config.geolock.maxmindDatabase)
-    if (!maxmind) {
-        console.log("Error loading Maxmind Database")
+    if (config.geolock.customModule) {
+        global.maxmind = require(config.geolock.customModule)
+    } else {
+        global.maxmind = require("maxmind").openSync(global.config.geolock.maxmindDatabase)
+        if (!maxmind) {
+            console.log("Error loading Maxmind Database")
+        }
     }
 }
 
-export function isAllowed(ip) {
+export async function isAllowed(ip) {
     if (typeof config.geolock === "undefined" || !config.geolock.enabled) {
         return true
     }
-    let ipLocation = maxmind.get(ip)
+
     let isAllowlistMode = config.geolock.mode === "allowlist" || config.geolock.mode === "whitelist" // the last value is deprecated
-    if (!ipLocation) {
-        return isAllowlistMode || config.geolock.allowUnknown
+
+    try {
+        let ipLocation = maxmind.get(ip)
+        if (typeof ipLocation.then === "function") {
+            ipLocation = await ipLocation // in case module gives a promise
+        }
+        if (!ipLocation) {
+            return config.geolock.allowUnknown ? true : false
+        }
+        if (config.geolock.countryCodes.indexOf(ipLocation.country.iso_code) === -1) {
+            return !isAllowlistMode
+        }
+    } catch (error) {
+        console.log(error)
     }
-    if (config.geolock.countryCodes.indexOf(ipLocation.country.iso_code) === -1) {
-        return !isAllowlistMode
-    }
-    return isAllowlistMode
+
+    return config.geolock.allowUnknown ? true : false
 }

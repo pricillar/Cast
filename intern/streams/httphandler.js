@@ -15,8 +15,8 @@ export default (app, wrap) => {
     }
 
     // classic stream clients use HEAD calls to get stream info
-    app.head("/streams/:stream", (req, res) => {
-        if (!geolock.isAllowed(req.processedIP)) {
+    app.head("/streams/:stream", async (req, res) => {
+        if (!(await geolock.isAllowed(req.processedIP))) {
             return res.status(401).send()
         }
         if (!req.params.stream) {
@@ -73,7 +73,7 @@ export default (app, wrap) => {
 
     // HLS stream handler
     app.get("/hls/:stream/:file", wrap(async (req, res) => {
-        if (!geolock.isAllowed(req.processedIP)) {
+        if (!(await geolock.isAllowed(req.processedIP))) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
         if (!global.streams.streamExists(req.params.stream)) {
@@ -110,7 +110,7 @@ export default (app, wrap) => {
 
     // DASH stream handler
     app.get("/dash/:stream/:file", wrap(async (req, res) => {
-        if (!geolock.isAllowed(req.processedIP)) {
+        if (!(await geolock.isAllowed(req.processedIP))) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
         if (!global.streams.streamExists(req.params.stream)) {
@@ -144,9 +144,9 @@ export default (app, wrap) => {
     }))
 
     // Classic stream handler
-    app.get("/streams/:stream", (req, res) => {
+    app.get("/streams/:stream", async (req, res) => {
 
-        if (!geolock.isAllowed(req.processedIP)) {
+        if (!(await geolock.isAllowed(req.processedIP))) {
             return res.status(401).send("Your country is not allowed to tune in to the stream")
         }
 
@@ -219,7 +219,7 @@ export default (app, wrap) => {
             headers["icy-metaint"] = 8192;
         }
 
-        var listenerID = global.streams.listenerTunedIn(req.params.stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
+        var listenerID = await global.streams.listenerTunedIn(req.params.stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000))
         res.writeHead(200, headers);
 
         // setup icy
@@ -322,7 +322,7 @@ export default (app, wrap) => {
 
     const serveM3U8ForStream = async (stream, req, res) => {
         if (!req.query.id || !global.streams.listenerIdExists(stream, req.query.id, req.processedIP, req.headers["user-agent"])) {
-            var listenerID = global.streams.listenerTunedIn(stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
+            var listenerID = await global.streams.listenerTunedIn(stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
             if (!global.streams.hlsLastHit[req.params.stream]) {
                 global.streams.hlsLastHit[stream] = {}
             }
@@ -371,7 +371,7 @@ export default (app, wrap) => {
 
     const serveMPDForStream = async (stream, req, res) => {
         if (!req.query.id || !global.streams.listenerIdExists(stream, req.query.id, req.processedIP, req.headers["user-agent"])) {
-            var listenerID = global.streams.listenerTunedIn(stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
+            var listenerID = await global.streams.listenerTunedIn(stream, req.processedIP, req.headers["user-agent"], Math.round((new Date()).getTime() / 1000), true)
             if (!global.streams.hlsLastHit[req.params.stream]) {
                 global.streams.hlsLastHit[stream] = {}
             }
