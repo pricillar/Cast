@@ -97,7 +97,11 @@ export default class DASHHandler {
         if (highest - KEEP_SEGMENTS > lowest) {
             this.oldestChunk = (highest - KEEP_SEGMENTS )
             for (let i = lowest; i < (highest - KEEP_SEGMENTS ); i++) {
-                await unlink(`${this.tempPath}/chunk-stream0-${i}.m4s`)
+                try {
+                    await unlink(`${this.tempPath}/chunk-stream0-${i}.m4s`)
+                } catch (error) {
+                    console.log(error)
+                }
             }
         }
     }
