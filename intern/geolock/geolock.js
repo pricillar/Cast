@@ -22,7 +22,7 @@ export async function isAllowed(ip) {
             ipLocation = await ipLocation // in case module gives a promise
         }
         if (!ipLocation) {
-            return isAllowlistMode || config.geolock.allowUnknown
+            return config.geolock.allowUnknown ? true : false
         }
         if (config.geolock.countryCodes.indexOf(ipLocation.country.iso_code) === -1) {
             return !isAllowlistMode
@@ -31,5 +31,5 @@ export async function isAllowed(ip) {
         console.log(error)
     }
 
-    return isAllowlistMode
+    return config.geolock.allowUnknown ? true : false
 }
