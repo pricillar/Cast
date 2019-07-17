@@ -23,7 +23,7 @@
     "errorhandler": "1.5.1",
     "exec-stream": "~0.1.0",
     "express": "^4.17.1",
-    "express-useragent": "^1.0.12",
+    "express-useragent": "^1.0.13",
     "geojson": "~0.5.0",
     "http-auth": "^3.2.3",
     "http-parser-js": "^0.5.1",
